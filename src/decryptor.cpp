@@ -1,5 +1,5 @@
-#include "Permutations.h"
-#include "Functions.h"
+#include "../include/permutations.h"
+#include "../include/functions.h"
 
 std::ifstream input;
 std::ofstream output;

@@ -1,5 +1,6 @@
-#include "Functions.h"
-#include "Permutations.h"
+#include "../include/functions.h"
+#include "../include/permutations.h"
+
 
 void DES(unsigned (*pta)[64],unsigned (*subkeya)[16][48],unsigned (*ct)[2][32],unsigned (*ctbit)[64],int i,int mode, int decrypt){
 

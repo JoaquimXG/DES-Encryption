@@ -1,9 +1,9 @@
-#include "Functions.h"
+#include "../include/functions.h"
 #include <string>
 #include <iostream>
 #include <bitset>
 #include <math.h>
-#include "Permutations.h"
+#include "../include/permutations.h"
 #include <fstream>
 #include <map>
 #include <iomanip>
@@ -49,8 +49,8 @@ int arrayout(T array[],int size,int split,int file,bool hex){//outputs the conte
     }
     return 0;
 }
-template arrayout(unsigned array[],int size,int split,int file,bool hex);//defining templates currently in use 
-template arrayout(char array[],int size,int split,int file,bool hex);
+template int arrayout(unsigned array[],int size,int split,int file,bool hex);//defining templates currently in use 
+template int arrayout(char array[],int size,int split,int file,bool hex);
 
 int leftshift(unsigned array[],int size,int shift){//array to be shifted, size of array, size of shift to be performed
     if (shift>=size){

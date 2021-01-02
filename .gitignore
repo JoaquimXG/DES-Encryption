@@ -1,1 +1,8 @@
 \!current/
+
+/src/decryptor
+/src/encryptor
+
+/src/obj/
+
+*.o
