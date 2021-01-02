@@ -1,7 +1,7 @@
 \!current/
 
-/src/decryptor
-/src/encryptor
+decryptor
+encryptor
 
 /src/obj/
 
