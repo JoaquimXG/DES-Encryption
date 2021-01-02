@@ -125,7 +125,7 @@ int main (int argc, char* argv[]){
     }
     std::cout<<std::hex;
 
-    arrayout(output,file_contents.size()+padding,555500,1,1);
+    arrayout(output,file_contents.size()+padding,9999999,1,1);
     arrayout(output,file_contents.size()+padding,16,0,1);
 
     return 0;
