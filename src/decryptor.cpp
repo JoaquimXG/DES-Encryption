@@ -97,7 +97,7 @@ int main(int argc,char *argv[]){
         char tempc = (char)binarytodecimal(&ptbit[0][i*8],8);
         output[i]=tempc;
     }
-    arrayout(output,file_contents.size()/2,500000);
+    arrayout(output,file_contents.size()/2,500000,1);
 
     return 0;
 }

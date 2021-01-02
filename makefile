@@ -50,4 +50,20 @@ decryptor: $(OBJ) $(DECRYPT_OBJ)
 # Rule to tidy any output
 .PHONY: clean
 clean:
-	rm -f $(ODIR)/*.o *~ core $(IDIR)/*~ encryptor decryptor
+	rm -f $(ODIR)/*.o *~ core $(IDIR)/*~ encryptor decryptor 
+	rm -rf test
+
+# Rule to perform the most basic tests
+.PHONY: test
+test:
+	$(MAKE) $(ODIR)/.sentinel
+	mkdir -p test 
+	ls -al >> test/input.txt
+	./encryptor test/input.txt -o test/encrypted.hex
+	./decryptor test/encrypted.hex -o test/decrypted.txt
+	@echo 
+	@echo 
+	@echo "Running diff on input and decrypted files -------------------------"
+	@echo 
+	diff test/input.txt test/decrypted.txt
+

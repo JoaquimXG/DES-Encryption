@@ -43,6 +43,18 @@ Options:
     -m mode       Mode of operation [ECB | CBC | PCBC | CFB | OFB]
 ```
 
+# Testing and cleanup
+
+## Testing
+You can run `make test` to initiate a very basic test of the encryption functionality.
+The makefile will generate a short file, encrypt the file with `encryptor` then decrypt with `decryptor`. 
+The files are then compared and the output is displayed. 
+
+## Cleanup
+
+Running `make clean` will remove all object files, binaries and test files.
+
+
 # Roadmap
 
 Increase efficiency of functions like leftshift
