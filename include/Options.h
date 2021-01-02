@@ -1,0 +1,22 @@
+#ifndef DESENCRYPTION_INCLUDE_ARGUMENTS_H_
+#define DESENCRYPTION_INCLUDE_ARGUMENTS_H_
+
+struct Options {
+    int mode;
+
+    //currently not in use but will be for AES and other encryption algorthms
+    int encryptmethod;
+
+    //decides the size of each block of encryption , used for the stream cypher modes (OFB ,OFB)
+    int encrypt_size;
+};
+
+enum Mode {
+    ECB,CBC,PCBC,CFB,OFB
+};
+
+enum Encrypt {
+    DES_m,AES_m
+};
+
+#endif

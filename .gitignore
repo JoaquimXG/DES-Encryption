@@ -6,3 +6,5 @@ encryptor
 /src/obj/
 
 *.o
+
+.txt
