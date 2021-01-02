@@ -1,61 +1,37 @@
 #include "../include/permutations.h"
 #include "../include/functions.h"
+#include "../include/Options.h"
 
 std::ifstream input;
 std::ofstream output;
 
 int main(int argc,char *argv[]){
 
-    enum mode
-    {
-        ECB,CBC,PCBC,CFB,OFB
-    };
-    int mode = ECB;//0 for ECB, 1 for CBC,2 for PCBC,3 for cfb
-    enum encrypt
-    {
-        DES_m,AES_m
-    };
-    int encryptmethod = DES_m;//currently not in use but will be for AES and other encryption algorthms
-    int encrypt_size = 64;//decides the size of each block of encryption , used for the stream cypher modes (CFB ,OFB)
+    Options encryptOpts;
 
-    output.open("Assisting/decryptor-dump.csv");
-    if (!output.is_open()){
-        std::cout<<"\n------------output directory not found-----------";
-        return 1;
+    int result = parseCommandLineArguments(argc, argv, &encryptOpts, true);
+    switch (result){
+        //Command line arguments incorrect
+        case -1:
+            printUsage();
+            return -1;
+        //File handling failure e.g. can't open file 
+        case -2:
+            return -2;
     }
 
-    if (argc>1){//chosing mode of operation 
-        std::string argv1 = argv[1];
-        if (argv1=="cbc"){
-            std::cout<<"\nUtilising CBC Mode of operation\n";
-            mode = CBC;
-        }
-        else if (argv1=="pcbc"){
-            std::cout<<"\nUtilising PCBC Mode of operation\n";
-            mode =PCBC;
-        }
-        else if (argv1=="cfb"){
-            std::cout<<"\nUtilising CFB Mode of operation\n";
-            mode =CFB;
-            encrypt_size=8;
-        }
-        else if (argv1=="ofb"){
-            std::cout<<"\nUtilising OFB Mode of operation\n";
-            mode =OFB;
-            encrypt_size=8;
-        }
-        else{
-            std::cout<<"\nUtilising ECB Mode of operation\n";
-        }
-    }
+    //TODO potentially remove this
+    int mode = encryptOpts.mode;
+    int encryptmethod = encryptOpts.encryptmethod;
+    int encrypt_size = encryptOpts.encrypt_size;
+    std::string iv = encryptOpts.iv;
+    std::string key = encryptOpts.key;
 
     unsigned IVa[64];
-    getIV(&IVa);//takes IV input and converts to binary array
+    chartobit(iv, IVa);
 
     unsigned keya[16][48];
-    getkey(&keya);//gets key and generates subkeys
-
-    getfile();//gets file with error checking
+    DESkeygenerate(key, &keya);//gets key and generates subkeys
 
     //converting hex format txt file to string variable, measuring the length, padding and creating a suitable length array to contain cypher text binary
     std::string file_contents { std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>() };//consrtuct string varaible by iterating through file buffer

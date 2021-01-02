@@ -1,3 +1,5 @@
+#include <string>
+
 #ifndef DESENCRYPTION_INCLUDE_ARGUMENTS_H_
 #define DESENCRYPTION_INCLUDE_ARGUMENTS_H_
 
@@ -9,6 +11,12 @@ struct Options {
 
     //decides the size of each block of encryption , used for the stream cypher modes (OFB ,OFB)
     int encrypt_size;
+
+    //User input value for IV
+    std::string iv;
+
+    //User input value for key
+    std::string key;
 };
 
 enum Mode {

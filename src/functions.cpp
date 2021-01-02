@@ -8,6 +8,7 @@
 #include <map>
 #include <iomanip>
 #include <getopt.h>
+#include <string.h>
 
 extern std::ofstream output;
 extern std::ifstream input;
@@ -75,11 +76,13 @@ int leftshift(unsigned array[],int size,int shift){//array to be shifted, size o
     return 0;
 }
 
+//TODO, could this function not just return the bitset 
+//this is only used for the IV
 int chartobit(std::string string,unsigned array[]){
     int size = string.size();
-    for (int i=0;i<size;i++){//loops through key characters and turns them into 8 bit representaion, adds that to keya
+    for (int i=0; i < size; i++){//loops through key characters and turns them into 8 bit representaion, adds that to keya
         std::bitset<8>temp(string.c_str()[i]);//turn each character into 8 bit representation
-        for (int j=7;j!=-1;j--){//loop through the values in 8 bit array (temp) and add to the full keya (the iterator has to start at 7 because the order of the bits in the array (temp) are in little endian order)
+        for (int j=7; j > -1; j--){//loop through the values in 8 bit array (temp) and add to the full keya (the iterator has to start at 7 because the order of the bits in the array (temp) are in little endian order)
             *array=temp[j];
             array++;
         }
@@ -188,36 +191,6 @@ void DESkeygenerate(std::string &key,unsigned (*keya)[16][48]){//generates 16 48
         }
 }
 
-void getkey(unsigned (*keya)[16][48],int mode){//takes a key as input and generates the keys required for certain encryption algorithms
-    std::string key;
-    bool keycheck = 0;
-    while (!keycheck){//loop to get 64 bit /8 byte key as input including error checking to ensure key is 8 bytes
-        std::cout << "Please input 64 bit key: ";
-        std::cin >> key;
-        if (key.size()==8){
-            keycheck = 1;
-        }
-    }
-    key = "12345678";
-    if (mode==0){//change to use some enumeration
-        DESkeygenerate(key,keya);
-    }
-}
-
-void getIV(unsigned (*IVa)[64]){//takes IV input and converts to binary array format
-    std::string IV;
-    bool IVcheck = 0;
-    while (!IVcheck){//loop to get 64 bit /8 byte IV as input including error checking to ensure IV is 8 bytes
-        std::cout << "Please input 64 bit IV: ";
-        std::cin >> IV;
-        if (IV.size()==8){
-            IVcheck = 1;
-        }
-    }
-    IV = "87654321";
-    chartobit(IV,*IVa);
-}
-
 //TODO Delete this
 void getfile(){//takes file as input with error checking, requires there to be a valid std::ifstream input to utilise
     std::string pt;
@@ -249,16 +222,24 @@ void hextobit(std::string file_contents,unsigned *array){
 }
 
 //Parses command line arguments
-int parseCommandLineArguments(int argc, char* argv[], Options* encryptOpts){
+int parseCommandLineArguments(int argc, char* argv[], Options* encryptOpts, bool decrypt){
     std::string outputFileName;
     std::string inputFileName;
     std::string modeString;
+    std::string fileType;
+
+    if (decrypt){
+        fileType = "decrypt";
+    }else {
+        fileType = "encrypt";
+    }
 
     //Using getopt library to parse command line arguments
     //m: for mode
     //o: for output file
     //-: stands for any arguments that don't have options and corresponds with case 1
     int opt;
+    int ivLength, keyLength;
     while ((opt = getopt(argc, argv, "-:m:o:i:k:")) != -1) {
         switch (opt) {
             case 'm':
@@ -270,10 +251,21 @@ int parseCommandLineArguments(int argc, char* argv[], Options* encryptOpts){
                 outputFileName = optarg;
                 break;
             case 'i':
-                //TODO handle command line IV
+                //TODO should you return if the IV is the wrong length???
+                //Maybe the IV should just be padded, the problem is that it would
+                //have to be padded in the same manner the next time as well
+                if (strlen(optarg) != 8){
+                    return -2;
+                };
+                (*encryptOpts).iv = optarg;
                 break;
             case 'k':
-                //TODO handle command line key
+                if (strlen(optarg) != 8){
+                    return -2;
+                };
+                (*encryptOpts).key = optarg;
+                break;
+
             // Return with error if either an unknown option is passed or if there are
             // missing arguments
             case '?':
@@ -296,9 +288,14 @@ int parseCommandLineArguments(int argc, char* argv[], Options* encryptOpts){
         }
     }
 
+
     // Handle input file not being set
     if (inputFileName.empty()){
-        std::cout << "[-] Please provide a file to encrypt\n";
+        if (decrypt){
+            std::cout << "[-] Please provide a file to decrypt\n";
+        } else {
+            std::cout << "[-] Please provide a file to encrypt\n";
+        }
         return -1;
     }
     else {
@@ -311,14 +308,33 @@ int parseCommandLineArguments(int argc, char* argv[], Options* encryptOpts){
 
     // Handle output file not being set
     if (outputFileName.empty()){
-        std::cout << "[+] Output file name was not set, using encrypted.txt as output\n";
-        outputFileName = "encrypted.txt";
+        if (decrypt){
+            std::cout << "[+] No output file chosen, using default (decrypted.txt)\n";
+            outputFileName = "decrypted.txt";
+        } else {
+            std::cout << "[+] No output file chosen, using default (encrypted.txt)\n";
+            outputFileName = "encrypted.txt";
+        }
+    }
+
+    //Handle no Key set 
+    //TODO generate a random key and display it to the user at the end
+    if ((*encryptOpts).key.empty()){
+        std::cout << "[-] No key was chosen, using default (00000000)\n";
+        (*encryptOpts).key = "00000000";
+    }
+
+    //Handle no IV set 
+    //TODO generate a random IV and display it to the user at the end
+    if ((*encryptOpts).iv.empty()){
+        std::cout << "[-] No IV was chosen, using default (00000000)\n";
+        (*encryptOpts).iv = "00000000";
     }
 
     // Handle mode option, either a mode arguement was never passed and the default will be chosen 
     // or a mode has been passed and should be parsed
     if (modeString.empty()){
-        std::cout << "[+] No method of encryption was chosen, using default (ECB Mode)\n";
+        std::cout << "[+] No mode of operation was chosen, using default (ECB Mode)\n";
         (*encryptOpts).mode = ECB;
         (*encryptOpts).encrypt_size = 64;
         (*encryptOpts).encryptmethod = DES_m;
@@ -373,13 +389,29 @@ int parseEncryptionModeArg(std::string encryptionArg, Options* encryptOpts){
     return 0;
 }
 
-void printUsage(){
-    std::cout << "DES Encryptor\n\n\
+void printUsage(bool decrypt){
+    if (decrypt){
+    std::cout << "DES Decryptor\n\n\
 Usage:\n\
-    encrypt inFile [-o outFile] [-m mode]\n\
+    decryptor inFile [-k key] [-i IV] [-o outFile] [-m mode]\n\
 \n\
 Options:\n\
     -h --help     Show this screen.\n\
+    -i IV         Initialisation vector for encryption\n\
+    -k key        Encryption key\n\
     -o outFile    Output file\n\
-    -m mode       Method of encryption [ECB | CBC | PCBC | CFB | OFB]\n";
+    -m mode       Mode of operation [ECB | CBC | PCBC | CFB | OFB]\n";
+    }
+    else {
+    std::cout << "DES Encryptor\n\n\
+Usage:\n\
+    encryptor inFile [-k key] [-i IV] [-o outFile] [-m mode]\n\
+\n\
+Options:\n\
+    -h --help     Show this screen.\n\
+    -i IV         Initialisation vector for encryption\n\
+    -k key        Encryption key\n\
+    -o outFile    Output file\n\
+    -m mode       Mode of operation [ECB | CBC | PCBC | CFB | OFB]\n";
+    }
 }

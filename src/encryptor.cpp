@@ -6,7 +6,6 @@
 std::ofstream output;
 std::ifstream input;
 
-
 int main (int argc, char* argv[]){
 
     Options encryptOpts;
@@ -26,12 +25,14 @@ int main (int argc, char* argv[]){
     int mode = encryptOpts.mode;
     int encryptmethod = encryptOpts.encryptmethod;
     int encrypt_size = encryptOpts.encrypt_size;
+    std::string iv = encryptOpts.iv;
+    std::string key = encryptOpts.key;
 
     unsigned IVa[64];
-    getIV(&IVa);//takes IV input and converts to binary array
+    chartobit(iv, IVa);
     
     unsigned keya[16][48];
-    getkey(&keya);//gets key and generates subkeys
+    DESkeygenerate(key, &keya);//gets key and generates subkeys
 
     //converting file to string variable then to plaintext array and adding padding
     std::string file_contents { std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>() };//consrtuct string varaible by iterating through file buffer
