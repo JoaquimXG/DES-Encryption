@@ -7,6 +7,7 @@
 #include <fstream>
 #include <map>
 #include <iomanip>
+#include <getopt.h>
 
 extern std::ofstream output;
 extern std::ifstream input;
@@ -217,6 +218,7 @@ void getIV(unsigned (*IVa)[64]){//takes IV input and converts to binary array fo
     chartobit(IV,*IVa);
 }
 
+//TODO Delete this
 void getfile(){//takes file as input with error checking, requires there to be a valid std::ifstream input to utilise
     std::string pt;
     bool ptcheck = 0;
@@ -246,3 +248,138 @@ void hextobit(std::string file_contents,unsigned *array){
     }
 }
 
+//Parses command line arguments
+int parseCommandLineArguments(int argc, char* argv[], Options* encryptOpts){
+    std::string outputFileName;
+    std::string inputFileName;
+    std::string modeString;
+
+    //Using getopt library to parse command line arguments
+    //m: for mode
+    //o: for output file
+    //-: stands for any arguments that don't have options and corresponds with case 1
+    int opt;
+    while ((opt = getopt(argc, argv, "-:m:o:i:k:")) != -1) {
+        switch (opt) {
+            case 'm':
+                //printf("Option m has arg: %s\n", optarg);
+                modeString = std::string(optarg);
+                break;
+            case 'o':
+                //printf("Option o has arg: %s\n", optarg);
+                outputFileName = optarg;
+                break;
+            case 'i':
+                //TODO handle command line IV
+                break;
+            case 'k':
+                //TODO handle command line key
+            // Return with error if either an unknown option is passed or if there are
+            // missing arguments
+            case '?':
+                printf("Unknown option: -%c\n", optopt);
+                break;
+                return -1;
+            case ':':
+                printf("Missing arg for -%c\n", optopt);
+                return -1;
+            case 1:
+                //Set the input file name to the first non-option argument
+                //if inputFileName has already been set then there are too many commandline arguments
+                if (inputFileName.empty()){
+                    inputFileName = optarg;
+                    break;
+                }
+                else {
+                    return -1;
+                }
+        }
+    }
+
+    // Handle input file not being set
+    if (inputFileName.empty()){
+        std::cout << "[-] Please provide a file to encrypt\n";
+        return -1;
+    }
+    else {
+        input.open(inputFileName.c_str());
+        if (!input.is_open()){
+            std::cout<<"[-] ------------ Can't open input file ------------\n";
+            return -2;
+        }
+    }
+
+    // Handle output file not being set
+    if (outputFileName.empty()){
+        std::cout << "[+] Output file name was not set, using encrypted.txt as output\n";
+        outputFileName = "encrypted.txt";
+    }
+
+    // Handle mode option, either a mode arguement was never passed and the default will be chosen 
+    // or a mode has been passed and should be parsed
+    if (modeString.empty()){
+        std::cout << "[+] No method of encryption was chosen, using default (ECB Mode)\n";
+        (*encryptOpts).mode = ECB;
+        (*encryptOpts).encrypt_size = 64;
+        (*encryptOpts).encryptmethod = DES_m;
+    }
+    else {
+        if (parseEncryptionModeArg(modeString, encryptOpts) == -1){
+            std::cout<<"[-] No valid encryption mode selected\n";
+            return -1;
+        }
+    }
+
+    //Open output file
+    output.open(outputFileName);
+    if (!output.is_open()){
+        std::cout<<"[-] ------------ Can't open output file ------------\n";
+        return -2;
+    }
+
+    return 0;
+}
+
+int parseEncryptionModeArg(std::string encryptionArg, Options* encryptOpts){
+    if (encryptionArg == "ecb" || encryptionArg == "ECB"){
+        std::cout<<"[+] Utilising ECB Mode of operation\n";
+        (*encryptOpts).mode = ECB;
+        (*encryptOpts).encrypt_size = 64;
+    }
+    else if (encryptionArg == "cbc" || encryptionArg == "CBC"){
+        std::cout<<"[+] Utilising CBC Mode of operation\n";
+        (*encryptOpts).mode = CBC;
+    }
+    else if (encryptionArg == "pcbc" || encryptionArg == "PCBC"){
+        std::cout<<"[+] Utilising PCBC Mode of operation\n";
+        (*encryptOpts).mode = PCBC;
+    }
+    else if (encryptionArg == "cfb" || encryptionArg == "CFB"){
+        std::cout<<"[+] Utilising CFB Mode of operation\n";
+        (*encryptOpts).mode = CFB;
+        (*encryptOpts).encrypt_size = 8;
+    }
+    else if (encryptionArg == "ofb" || encryptionArg == "OFB"){
+        std::cout<<"[+] Utilising OFB Mode of operation\n";
+        (*encryptOpts).mode = OFB;
+        (*encryptOpts).encrypt_size = 8;
+    }
+    else {
+        return -1;
+    }
+
+    //Currently hardcoding this as only one encryption method has been developed for the time being
+    (*encryptOpts).encryptmethod = DES_m;
+    return 0;
+}
+
+void printUsage(){
+    std::cout << "DES Encryptor\n\n\
+Usage:\n\
+    encrypt inFile [-o outFile] [-m mode]\n\
+\n\
+Options:\n\
+    -h --help     Show this screen.\n\
+    -o outFile    Output file\n\
+    -m mode       Method of encryption [ECB | CBC | PCBC | CFB | OFB]\n";
+}

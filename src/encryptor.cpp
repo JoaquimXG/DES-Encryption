@@ -2,35 +2,36 @@
 #include "../include/functions.h"
 #include "../include/Options.h"
 #include <iomanip>
-#include <getopt.h>
 
 std::ofstream output;
 std::ifstream input;
 
-int handleCommandLineArguments(int argc, char* argv[], Options* encryptOpts);
-int parseEncryptionModeArg(std::string, Options* encryptOpts);
-void printUsage();
 
 int main (int argc, char* argv[]){
 
     Options encryptOpts;
-    if (handleCommandLineArguments(argc, argv, &encryptOpts) == -1){
-        printUsage();
-        return -1;
-    };
 
+    int result = parseCommandLineArguments(argc, argv, &encryptOpts);
+    switch (result){
+        //Command line arguments incorrect
+        case -1:
+            printUsage();
+            return -1;
+        //File handling failure e.g. can't open file 
+        case -2:
+            return -2;
+    }
+
+    //TODO potentially remove this
     int mode = encryptOpts.mode;
     int encryptmethod = encryptOpts.encryptmethod;
     int encrypt_size = encryptOpts.encrypt_size;
-    return 0;
 
     unsigned IVa[64];
     getIV(&IVa);//takes IV input and converts to binary array
     
     unsigned keya[16][48];
     getkey(&keya);//gets key and generates subkeys
-
-    getfile();//gets file with error checking
 
     //converting file to string variable then to plaintext array and adding padding
     std::string file_contents { std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>() };//consrtuct string varaible by iterating through file buffer
@@ -132,129 +133,3 @@ int main (int argc, char* argv[]){
 }
 
 
-//Parses command line arguments
-int handleCommandLineArguments(int argc, char* argv[], Options* encryptOpts){
-    std::string outputFileName;
-    std::string inputFileName;
-    std::string modeString;
-
-    //Using getopt library to parse command line arguments
-    //m: for mode
-    //o: for output file
-    //-: stands for any arguments that don't have options and corresponds with case 1
-    int opt;
-    while ((opt = getopt(argc, argv, "-:m:o:i:k:")) != -1) {
-        switch (opt) {
-            case 'm':
-                //printf("Option m has arg: %s\n", optarg);
-                modeString = std::string(optarg);
-                break;
-            case 'o':
-                //printf("Option o has arg: %s\n", optarg);
-                outputFileName = optarg;
-                break;
-            case 'i':
-                //TODO handle command line IV
-                break;
-            case 'k':
-                //TODO handle command line key
-            // Return with error if either an unknown option is passed or if there are
-            // missing arguments
-            case '?':
-                printf("Unknown option: -%c\n", optopt);
-                break;
-                return -1;
-            case ':':
-                printf("Missing arg for -%c\n", optopt);
-                return -1;
-            case 1:
-                //Set the input file name to the first non-option argument
-                //if inputFileName has already been set then there are too many commandline arguments
-                if (inputFileName.empty()){
-                    inputFileName = optarg;
-                    break;
-                }
-                else {
-                    return -1;
-                }
-        }
-    }
-
-    // Handle input file not being set
-    if (inputFileName.empty()){
-        std::cout << "[-] Please provide a file to encrypt\n";
-        return -1;
-    }
-
-    // Handle output file not being set
-    if (outputFileName.empty()){
-        std::cout << "[+] Output file name was not set, using encrypted.txt as output\n";
-        outputFileName = "encrypted.txt";
-    }
-
-    // Handle mode option, either a mode arguement was never passed and the default will be chosen 
-    // or a mode has been passed and should be parsed
-    if (modeString.empty()){
-        std::cout << "[+] No method of encryption was chosen, using default (ECB Mode)\n";
-        (*encryptOpts).mode = ECB;
-        (*encryptOpts).encrypt_size = 64;
-    }
-    else {
-        if (parseEncryptionModeArg(modeString, encryptOpts) == -1){
-            std::cout<<"[-] No valid encryption mode selected\n";
-            return -1;
-        }
-    }
-
-    //Open output file
-    output.open(outputFileName);
-    if (!output.is_open()){
-        std::cout<<"[-] ------------ Can't open output file ------------\n";
-        return -2;
-    }
-
-    return 0;
-}
-
-int parseEncryptionModeArg(std::string encryptionArg, Options* encryptOpts){
-    if (encryptionArg == "ecb" || encryptionArg == "ECB"){
-        std::cout<<"[+] Utilising ECB Mode of operation\n";
-        (*encryptOpts).mode = ECB;
-        (*encryptOpts).encrypt_size = 64;
-    }
-    else if (encryptionArg == "cbc" || encryptionArg == "CBC"){
-        std::cout<<"[+] Utilising CBC Mode of operation\n";
-        (*encryptOpts).mode = CBC;
-    }
-    else if (encryptionArg == "pcbc" || encryptionArg == "PCBC"){
-        std::cout<<"[+] Utilising PCBC Mode of operation\n";
-        (*encryptOpts).mode = PCBC;
-    }
-    else if (encryptionArg == "cfb" || encryptionArg == "CFB"){
-        std::cout<<"[+] Utilising CFB Mode of operation\n";
-        (*encryptOpts).mode = CFB;
-        (*encryptOpts).encrypt_size = 8;
-    }
-    else if (encryptionArg == "ofb" || encryptionArg == "OFB"){
-        std::cout<<"[+] Utilising OFB Mode of operation\n";
-        (*encryptOpts).mode = OFB;
-        (*encryptOpts).encrypt_size = 8;
-    }
-    else {
-        return -1;
-    }
-    //Currently hardcoding this as only one encryption method has been developed for the time being
-    (*encryptOpts).encryptmethod = DES_m;
-    return 0;
-}
-
-void printUsage(){
-    std::cout << "DES Encryptor\n\n\
-Usage:\n\
-    encrypt inFile [-o outFile] [-m mode]\n\
-\n\
-Options:\n\
-    -h --help     Show this screen.\n\
-    -o outFile    Output file\n\
-    -m mode       Method of encryption [ECB | CBC | PCBC | CFB | OFB]\n";
-}

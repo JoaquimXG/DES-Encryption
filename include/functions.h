@@ -5,6 +5,7 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include "../include/Options.h"
 
 template<typename T>
 int arrayout(T array[],int size,int split,int file=0,bool hex=0);//prints an array to terminal where size is the length of the array and split is the length of each line
@@ -20,6 +21,15 @@ void getkey(unsigned (*keya)[16][48],int mode=0);//takes a key as input and gene
 void getIV(unsigned (*IVa)[64]);//takes IV input and converts to binary array format
 void getfile();//takes file as input with error checking, requires there to be a valid std::ifstream input to utilise
 void hextobit(std::string file_contents,unsigned *array);//converts a hex string into binary array form
+
+//Uses getopt to parse command line argumemts
+int parseCommandLineArguments(int argc, char* argv[], Options* encryptOpts);
+
+//Just parses the encryption method argument
+int parseEncryptionModeArg(std::string, Options* encryptOpts);
+
+//Prints the usage for this program
+void printUsage();
 
 
 
