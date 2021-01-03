@@ -316,7 +316,7 @@ void hextobit(std::string file_contents, unsigned *array) {
 // Parses command line arguments
 // Returns 0 if arguments are correct, -1 if there is a general error with
 // arguemnts, -2 if a file can't be opened
-int parseCommandLineArguments(int argc, char *argv[], Options *encryptOpts,
+int parseCommandLineArguments(int argc, char *argv[], Options encryptOpts,
                               bool decrypt) {
   std::string outputFileName;
   std::string inputFileName;
@@ -344,13 +344,13 @@ int parseCommandLineArguments(int argc, char *argv[], Options *encryptOpts,
       if (strlen(optarg) != 8) {
         return -2;
       };
-      (*encryptOpts).iv = optarg;
+      encryptOpts.iv = optarg;
       break;
     case 'k':
       if (strlen(optarg) != 8) {
         return -2;
       };
-      (*encryptOpts).key = optarg;
+      encryptOpts.key = optarg;
       break;
 
     // Return with error if either an unknown option is passed or if there are
@@ -404,16 +404,16 @@ int parseCommandLineArguments(int argc, char *argv[], Options *encryptOpts,
 
   // Handle no Key set
   // TODO generate a random key and display it to the user at the end
-  if ((*encryptOpts).key.empty()) {
+  if (encryptOpts.key.empty()) {
     std::cout << "[-] No key was chosen, using default (00000000)\n";
-    (*encryptOpts).key = "00000000";
+    encryptOpts.key = "00000000";
   }
 
   // Handle no IV set
   // TODO generate a random IV and display it to the user at the end
-  if ((*encryptOpts).iv.empty()) {
+  if (encryptOpts.iv.empty()) {
     std::cout << "[-] No IV was chosen, using default (00000000)\n";
-    (*encryptOpts).iv = "00000000";
+    encryptOpts.iv = "00000000";
   }
 
   // Handle mode option, either a mode arguement was never passed and the
@@ -421,9 +421,9 @@ int parseCommandLineArguments(int argc, char *argv[], Options *encryptOpts,
   if (modeString.empty()) {
     std::cout
         << "[+] No mode of operation was chosen, using default (ECB Mode)\n";
-    (*encryptOpts).mode = ECB;
-    (*encryptOpts).encrypt_size = 64;
-    (*encryptOpts).encryptmethod = DES_m;
+    encryptOpts.mode = ECB;
+    encryptOpts.encrypt_size = 64;
+    encryptOpts.encryptmethod = DES_m;
   } else {
     if (parseEncryptionModeArg(modeString, encryptOpts) == -1) {
       std::cout << "[-] No valid encryption mode selected\n";
@@ -441,32 +441,32 @@ int parseCommandLineArguments(int argc, char *argv[], Options *encryptOpts,
   return 0;
 }
 
-int parseEncryptionModeArg(std::string encryptionArg, Options *encryptOpts) {
+int parseEncryptionModeArg(std::string encryptionArg, Options encryptOpts) {
   if (encryptionArg == "ecb" || encryptionArg == "ECB") {
     std::cout << "[+] Utilising ECB Mode of operation\n";
-    (*encryptOpts).mode = ECB;
-    (*encryptOpts).encrypt_size = 64;
+    encryptOpts.mode = ECB;
+    encryptOpts.encrypt_size = 64;
   } else if (encryptionArg == "cbc" || encryptionArg == "CBC") {
     std::cout << "[+] Utilising CBC Mode of operation\n";
-    (*encryptOpts).mode = CBC;
+    encryptOpts.mode = CBC;
   } else if (encryptionArg == "pcbc" || encryptionArg == "PCBC") {
     std::cout << "[+] Utilising PCBC Mode of operation\n";
-    (*encryptOpts).mode = PCBC;
+    encryptOpts.mode = PCBC;
   } else if (encryptionArg == "cfb" || encryptionArg == "CFB") {
     std::cout << "[+] Utilising CFB Mode of operation\n";
-    (*encryptOpts).mode = CFB;
-    (*encryptOpts).encrypt_size = 8;
+    encryptOpts.mode = CFB;
+    encryptOpts.encrypt_size = 8;
   } else if (encryptionArg == "ofb" || encryptionArg == "OFB") {
     std::cout << "[+] Utilising OFB Mode of operation\n";
-    (*encryptOpts).mode = OFB;
-    (*encryptOpts).encrypt_size = 8;
+    encryptOpts.mode = OFB;
+    encryptOpts.encrypt_size = 8;
   } else {
     return -1;
   }
 
   // Currently hardcoding this as only one encryption method has been developed
   // for the time being
-  (*encryptOpts).encryptmethod = DES_m;
+  encryptOpts.encryptmethod = DES_m;
   return 0;
 }
 

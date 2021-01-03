@@ -1,4 +1,4 @@
-#include "../include/Options.h"
+#include "Options.h"
 #include <bitset>
 #include <fstream>
 #include <iostream>
@@ -53,11 +53,11 @@ void getfile();
 void hextobit(std::string file_contents, unsigned *array);
 
 // Uses getopt to parse command line argumemts
-int parseCommandLineArguments(int argc, char *argv[], Options *encryptOpts,
+int parseCommandLineArguments(int argc, char *argv[], Options encryptOpts,
                               bool decrypt = false);
 
 // Just parses the encryption method argument
-int parseEncryptionModeArg(std::string, Options *encryptOpts);
+int parseEncryptionModeArg(std::string, Options encryptOpts);
 
 // Prints the usage for this program
 void printUsage(bool decrypt = false);

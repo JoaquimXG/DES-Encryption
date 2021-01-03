@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
 
   Options encryptOpts;
 
-  int result = parseCommandLineArguments(argc, argv, &encryptOpts);
+  int result = parseCommandLineArguments(argc, argv, encryptOpts);
   switch (result) {
   // Command line arguments incorrect
   case -1:

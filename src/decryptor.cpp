@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
 
   Options encryptOpts;
 
-  int result = parseCommandLineArguments(argc, argv, &encryptOpts, true);
+  int result = parseCommandLineArguments(argc, argv, encryptOpts, true);
   switch (result) {
   case -1:
     printUsage();
