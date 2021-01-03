@@ -1,7 +1,7 @@
 #include <string>
 
-#ifndef DESENCRYPTION_INCLUDE_ARGUMENTS_H_
-#define DESENCRYPTION_INCLUDE_ARGUMENTS_H_
+#ifndef DESENCRYPTION_INCLUDE_OPTIONS_H_
+#define DESENCRYPTION_INCLUDE_OPTIONS_H_
 
 struct Options {
   int mode;

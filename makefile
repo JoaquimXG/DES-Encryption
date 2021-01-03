@@ -59,9 +59,15 @@ test:
 	$(MAKE) $(ODIR)/.sentinel
 	rm -rf test/
 	mkdir -p test 
-	ls -al >> test/input.txt
+	ls -l >> test/input.txt
 	./encryptor test/input.txt -o test/encrypted.hex
 	./decryptor test/encrypted.hex -o test/decrypted.txt
+	./encryptor test/input.txt -o test/encryptedcbc.hex -m cbc
+	./decryptor test/encryptedcbc.hex -o test/decryptedcbc.txt -m cbc
+	./encryptor test/input.txt -o test/encryptedpcbc.hex -m pcbc
+	./decryptor test/encryptedpcbc.hex -o test/decryptedpcbc.txt -m pcbc
+	./encryptor test/input.txt -o test/encryptedcfb.hex -m cfb
+	./decryptor test/encryptedcfb.hex -o test/decryptedcfb.txt -m cfb
 	./encryptor test/input.txt -o test/encryptedofb.hex -m ofb
 	./decryptor test/encryptedofb.hex -o test/decryptedofb.txt -m ofb
 	@echo 
@@ -69,6 +75,9 @@ test:
 	@echo "Running diff on input and decrypted files -------------------------"
 	@echo 
 	cat test/decrypted.txt	
+	cat test/decryptedcbc.txt	
+	cat test/decryptedpcbc.txt	
+	cat test/decryptedcfb.txt	
 	cat test/decryptedofb.txt	
 
 

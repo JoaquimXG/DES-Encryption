@@ -40,8 +40,6 @@ int main(int argc, char *argv[]) {
     keya[i][j] = encryptOpts.keyArray[i][j];
   }
 
-
-
   // Consrtuct string varaible by iterating through file buffer
   std::string inputFileString{std::istreambuf_iterator<char>(input),
                             std::istreambuf_iterator<char>()};
