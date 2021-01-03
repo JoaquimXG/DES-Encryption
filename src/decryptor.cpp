@@ -2,8 +2,8 @@
 #include "../include/functions.h"
 #include "../include/permutations.h"
 
-std::ifstream input;
-std::ofstream output;
+extern std::ifstream input;
+extern std::ofstream output;
 
 int main(int argc, char *argv[]) {
 
@@ -26,11 +26,11 @@ int main(int argc, char *argv[]) {
   std::string key = encryptOpts.key;
 
   unsigned IVa[64];
-  chartobit(iv, IVa);
+  charToBit(iv, IVa);
 
   unsigned keya[16][48];
   // gets key and generates subkeys
-  DESkeygenerate(key, &keya);
+  generateSubKeys(key, &keya);
 
   // converting hex format txt file to string variable, measuring the length,
   // padding and creating a suitable length array to contain cypher text binary
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
       XOR(&workinga[0][0], &cta[0][(i * encrypt_size)],
           &ptbit[0][(i * encrypt_size)], encrypt_size);
       // IV preparation
-      leftshift(IVa, 64, 8);
+      leftShift(IVa, 64, 8);
 
       for (int k = 0; k < encrypt_size; k++) {
         if (mode == CFB) {

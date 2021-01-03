@@ -2,15 +2,30 @@
 #include <map>
 #include <string>
 
-// for permutations
-int lookupPC1[56] = {56, 48, 40, 32, 24, 16, 8,  0,  57, 49, 41, 33, 25, 17,
+/*
+ * Lookup table Permuted choice 1 for 56 bit key generation.
+ * This table is used to select 56 bits from the 64 bit key.
+ * Each value represents the bit position that is selected from the 64 bit key and the index
+ * will be its new position in the 56 bit key.
+ */
+int permutedChoice1[56] = {56, 48, 40, 32, 24, 16, 8,  0,  57, 49, 41, 33, 25, 17,
                      9,  1,  58, 50, 42, 34, 26, 18, 10, 2,  59, 51, 43, 35,
                      62, 54, 46, 38, 30, 22, 14, 6,  61, 53, 45, 37, 29, 21,
                      13, 5,  60, 52, 44, 36, 28, 20, 12, 4,  27, 19, 11, 3};
 
-int bitrotationtable[16] = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
+/* 
+ * Lookup table for the number of bits to left shift each 28 bit key
+ * during key generation.
+ */
+int bitRotationTable[16] = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
 
-int lookupPC2[48] = {13, 16, 10, 23, 0,  4,  2,  27, 14, 5,  20, 9,
+/*
+ * Lookup table Permuted choice 2 for 48 bit key generation.
+ * This table is used to select 48 bits from a 56 bit subkey.
+ * Each value represents the bit position that is selected from the 56 bit key and the index
+ * will be its new position in the 48 bit key.
+ */
+int permutedChoice2[48] = {13, 16, 10, 23, 0,  4,  2,  27, 14, 5,  20, 9,
                      22, 18, 11, 3,  25, 7,  15, 6,  26, 19, 12, 1,
                      40, 51, 30, 36, 46, 54, 29, 39, 50, 44, 32, 47,
                      43, 48, 38, 55, 33, 52, 45, 41, 49, 35, 28, 31};

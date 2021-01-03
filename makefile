@@ -30,13 +30,13 @@ DECRYPT_OBJ = $(patsubst %,$(ODIR)/%,$(_DECRYPT_OBJ))
 
 # Rule for compiling any object file from .cpp file
 $(ODIR)/%.o: src/%.cpp $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -g -c -o $@ $< $(CFLAGS)
 
 # Rule for compiling both binaries, encryptor and decryptor
 # Sentinel file is used to ensure all results are up to date
 $(ODIR)/.sentinel: $(OBJ) $(ENCRYPT_OBJ) $(DECRYPT_OBJ)
-	$(CC) -o encryptor $(OBJ) $(ENCRYPT_OBJ) $(CFLAGS)
-	$(CC) -o decryptor $(OBJ) $(DECRYPT_OBJ) $(CFLAGS)
+	$(CC) -g -o encryptor $(OBJ) $(ENCRYPT_OBJ) $(CFLAGS)
+	$(CC) -g -o decryptor $(OBJ) $(DECRYPT_OBJ) $(CFLAGS)
 	touch $(ODIR)/.sentinel
 
 # Rule fo encryptor on its own
@@ -66,4 +66,8 @@ test:
 	@echo "Running diff on input and decrypted files -------------------------"
 	@echo 
 	diff test/input.txt test/decrypted.txt
+	cat test/decrypted.txt	
 
+
+playground: $(ODIR)/playground.o
+	$(CC) -g -o play $(ODIR)/playground.o $(OBJ) $(CFLAGS)

@@ -10,8 +10,8 @@
 #include <string.h>
 #include <string>
 
-extern std::ofstream output;
-extern std::ifstream input;
+std::ofstream output;
+std::ifstream input;
 
 template <typename T>
 // outputs the contents of an integer array of size s in groups of size (split)
@@ -54,59 +54,89 @@ template int arrayout(unsigned array[], int size, int split, int file,
                       bool hex);
 template int arrayout(char array[], int size, int split, int file, bool hex);
 
+// TODO Delete this 
 // array to be shifted, size of array, size of shift to be performed
-int leftshift(unsigned array[], int size, int shift) {
-  if (shift >= size) {
-    shift = shift % size;
+void leftShiftOld(unsigned array[], int arrayLength, int shiftSize) {
+  if (shiftSize >= arrayLength) {
+    shiftSize = shiftSize % arrayLength;
   }
-  // creates an array to hold the values that will be shifted off the left end
-  // of the array
-  int hold[shift];
-  // iterates through shift number of values in the array to save the first
-  // values that will be moved to the end of the array
-  for (int i = 0; i < shift; i++) {
+
+  int hold[shiftSize];
+  for (int i = 0; i < shiftSize; i++) {
     hold[i] = *array;
     array++;
   }
-  // after all the values that will be moved to the end have been saved we can
-  // begin moving values to the beginning of the array we should be at
-  // array[shift] so *array-shift = array[0] then we iterate through
-  for (int i = 0; i < (size - shift); i++) {
-    *(array - shift) = *array;
+
+  for (int i = 0; i < (arrayLength - shiftSize); i++) {
+    *(array - shiftSize) = *array;
     array++;
   }
-  // the last place will be array[last] moved to array[last-shift] the iterator
-  // then moved past the end of the array so we need to bring it back, we are now
-  // at the last position in the array
   array--;
-  // iterates through the holding array starting at the end as this is where the
-  // array pointer is pointing, will run shift times for each value in the
-  // holding array
-  for (int i = (shift - 1); i > -1; i--) {
-    // i= shift-1 so the first value of i will be the last value in the hold
-    // array
+
+  for (int i = (shiftSize - 1); i > -1; i--) {
     *array = hold[i];
-    // iterating backwards through array
     array--;
   }
-  return 0;
 }
 
+/*
+ * Arithmetic left shift, modified array in place.
+ * Moves every element in an array to the left 'shiftSize' number of times.
+ * Any element which would fall out of the array is moved to the end to
+ * fill the new space.
+ *
+ * First, iterates through the input array and moves 'shiftSize' number of values
+ * into a holding array. 
+ * Continues to iterate through the input array, now moving values to the start of the array.
+ * Then iterates through the holding array, moving each value into the next available space in the inputArray.
+ *
+ * @param inputArray[] An unsigned array to be left shifted, will be modified in place.
+ * @param arrayLength The length of the inputArray.
+ * @param shiftSize The number of left shifts to be performed.
+ */
+void leftShift(unsigned inputArray[], int arrayLength, int shiftSize) {
+  if (shiftSize >= arrayLength) {
+    shiftSize = shiftSize % arrayLength;
+  }
+
+  int hold[shiftSize];
+  for (int i = 0; i < arrayLength; i++) {
+    if (i<shiftSize){
+      hold[i] = inputArray[i];
+    }
+    else {
+      inputArray[i-shiftSize] = inputArray[i];
+    }
+  }
+
+  int offset = arrayLength - shiftSize;
+  for (int i = 0; i < shiftSize; i++) {
+    inputArray[offset + i] = hold[i];
+  }
+}
+
+
 // TODO, could this function not just return the bitset
-// this is only used for the IV
-int chartobit(std::string string, unsigned array[]) {
-  int size = string.size();
-  // loops through key characters and turns them into 8 bit representaion, adds
-  // that to keya
-  for (int i = 0; i < size; i++) {
-    // turn each character into 8 bit representation
-    std::bitset<8> temp(string.c_str()[i]);
-    // loop through the values in 8 bit array (temp) and add to the full keya
-    // (the iterator has to start at 7 because the order of the bits in the array
-    // (temp) are in little endian order)
+/*
+ * Converts a string to binary.
+ * Each charcter is converted to an array of bits, length 8.
+ * std::bitset is used to convert each character to an arry of bits.
+ * as bitset stores bits in little-endian and big-endian is desired 
+ * the bitset is reversed when converted to an arry.
+ *
+ * @param inString The string to be converted to binary.
+ * @param outputArray An array where the result will be stored, the array must be long enough to store the result.
+ * @return 0
+ */
+int charToBit(std::string inString, unsigned outArray[]) {
+  int stringLength = inString.size();
+  for (int i = 0; i < stringLength; i++) {
+
+    std::bitset<8> tempBitset(inString.c_str()[i]);
     for (int j = 7; j > -1; j--) {
-      *array = temp[j];
-      array++;
+
+      *outArray = tempBitset[j];
+      outArray++;
     }
   }
   return 0;
@@ -211,31 +241,38 @@ void decimaltobinary(int integer, unsigned binarya[], int size) {
   }
 }
 
-// generates 16 48bit subkeys for DES from a 64 bit key
-void DESkeygenerate(std::string &key, unsigned (*keya)[16][48]) {
-  // Permutaion PC1
+
+//TODO could this function also not just return the keys
+/* 
+ * Generates 16 48bit subkeys for DES from a 64 bit key.
+ * The 64 bit key is first converted from characters to binary.
+ * 56 bits are then selected from the key using the Permuted Choice 1 table
+ * This 56 bit key is split in half into two 28 bit keys.
+ * For 16 rounds,
+ * Each 28 bit key is left shifted either 1 or 2 bits in a predefined order
+ * as defined by bitRotationTable.
+ * 48 bits are then selected from a combination of the 28 bit keys using 
+ * the Permuted Choice 2 table to form the each 48 bit key.
+ *
+ * @param &key A reference to std::string for the key input
+ * @param (*keya)[16][48] A pointer to a 2 dimensional array, 16 bits * 48 bit to store the 16 keys
+ */
+void generateSubKeys(std::string &key, unsigned (*keya)[16][48]) {
+
   unsigned keyPC1[2][28];
   unsigned keya64bit[64];
-  chartobit(key, keya64bit);
-  // permuatetes keya64bit using the lookup table
+  charToBit(key, keya64bit);
+
   for (int i = 0; i < 56; i++) {
-    keyPC1[0][i] = keya64bit[lookupPC1[i]];
+    keyPC1[0][i] = keya64bit[permutedChoice1[i]];
   }
 
-  // loops through each key generation stage, sub keys are left shifted then
-  // compressed
   for (int i = 0; i < 16; i++) {
-    leftshift(&keyPC1[0][0], 28, bitrotationtable[i]);
-    leftshift(&keyPC1[1][0], 28, bitrotationtable[i]);
+    leftShift(&keyPC1[0][0], 28, bitRotationTable[i]);
+    leftShift(&keyPC1[1][0], 28, bitRotationTable[i]);
 
-    // compression pc2
-    // iterate through the subkey that will be made from the
-    // condensed/permutated PC1 keys that have just been rotated
     for (int j = 0; j < 48; j++) {
-      // creating subkeys in subkey array where i is the subkey number and j is
-      // the position in that subkey the position each bit is taken from temp is
-      // decided by lookupPC2
-      (*keya)[i][j] = keyPC1[0][lookupPC2[j]];
+      (*keya)[i][j] = keyPC1[0][permutedChoice2[j]];
     }
   }
 }

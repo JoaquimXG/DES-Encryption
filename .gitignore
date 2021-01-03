@@ -10,5 +10,8 @@ test/
 *.o
 *.txt
 
+playground.cpp
+play
+
 .clang-format
 

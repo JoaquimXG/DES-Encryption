@@ -3,8 +3,8 @@
 #include "../include/permutations.h"
 #include <iomanip>
 
-std::ofstream output;
-std::ifstream input;
+extern std::ofstream output;
+extern std::ifstream input;
 
 int main(int argc, char *argv[]) {
 
@@ -29,26 +29,23 @@ int main(int argc, char *argv[]) {
   std::string key = encryptOpts.key;
 
   unsigned IVa[64];
-  chartobit(iv, IVa);
+  charToBit(iv, IVa);
 
   unsigned keya[16][48];
-  // gets key and generates subkeys
-  DESkeygenerate(key, &keya);
+  generateSubKeys(key, &keya);
 
   // converting file to string variable then to plaintext array and adding
   // padding consrtuct string varaible by iterating through file buffer
-  std::string file_contents{std::istreambuf_iterator<char>(input),
+  std::string inputFileString{std::istreambuf_iterator<char>(input),
                             std::istreambuf_iterator<char>()};
 
   // calculate the length of the last chunk of data to be encrypted and the
   // difference from 8 bytes
-  int padding = (8 - file_contents.size() % 8) % 8;
-  int encryption_block_num = (file_contents.size() + padding) / 8;
+  int padding = (8 - inputFileString.size()) % 8;
+  int encryption_block_num = (inputFileString.size() + padding) / 8;
   unsigned pta[encryption_block_num][64];
 
-  chartobit(file_contents, &pta[0][0]);
-  // if padding is required this loop will add padding to the end of the
-  // plaintext array
+  charToBit(inputFileString, &pta[0][0]);
   if (padding > 0) {
     // pointer to the last position in array
     unsigned *tempit = &pta[(encryption_block_num)-1][64 - 1];
@@ -61,8 +58,10 @@ int main(int argc, char *argv[]) {
   // Text encryption
   // cypher text binary output to be converted to hex or ascii
   unsigned ctbit[encryption_block_num][64];
+
   // working array for temporary data
   unsigned w_array[64];
+
   // working array for inside DES function, also used for storing the result of
   // DES when the result can't be saved to ctbit
   unsigned ct[2][32];
@@ -96,7 +95,7 @@ int main(int argc, char *argv[]) {
           }
           if (k != 0) {
             // change iva to hold the results of the above XOR
-            leftshift(IVa, 64, encrypt_size);
+            leftShift(IVa, 64, encrypt_size);
             // after lefshift this loop fills the LSB's in IVa with the result
             // of recent xor in ctbit
             for (int l = 0; l < encrypt_size; l++) {
@@ -138,7 +137,7 @@ int main(int argc, char *argv[]) {
         XOR(&ctbit[i][0], &ctbit[i - 1][0], &pta[i][0], 64);
       } else if (mode == CFB || mode == OFB) {
         for (int k = 0; k < 64 / encrypt_size; k++) {
-          leftshift(IVa, 64, encrypt_size);
+          leftShift(IVa, 64, encrypt_size);
           // after lefshift this loop fills the LSB's in IVa with the result of
           // recent xor in ctbit
           for (int l = 0; l < encrypt_size; l++) {

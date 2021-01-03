@@ -42,10 +42,10 @@ void DES(unsigned (*pta)[64], unsigned (*subkeya)[16][48],
     XOR(&result[0], (*ct)[0], (*ct)[0], 32);
 
     // swaps left with right
-    leftshift((*ct)[0], 64, 32);
+    leftShift((*ct)[0], 64, 32);
   }
   // swapping sides again because the final swap inside loop is unintended
-  leftshift((*ct)[0], 64, 32);
+  leftShift((*ct)[0], 64, 32);
 
   // arrayout(ct[0][0],64,8);
   // final permutation

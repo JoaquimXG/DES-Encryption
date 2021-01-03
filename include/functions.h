@@ -12,10 +12,10 @@ template <typename T>
 // is the length of each line
 int arrayout(T array[], int size, int split, int file = 0, bool hex = 0);
 
-int leftshift(unsigned array[], int size, int shift);
+void leftShift(unsigned array[], int size, int shift);
 
 // takes string input and saves binary representation to an array
-int chartobit(std::string string, unsigned array[]);
+int charToBit(std::string inString, unsigned outArray[]);
 
 // only to be used on arrays that are binary representations, first and second
 // are the arrays to XOR and result will be the address they are stored, size is
@@ -35,10 +35,11 @@ void decimaltobinary(int integer, unsigned binarya[], int size);
 
 // performs DES encryption on a given plaintext using 16 given keys storing the
 // result in a resulting ct array
-void DES(unsigned (*pta)[64], unsigned (*subkeya)[16][48], unsigned (*ct)[2][32], unsigned (*ctbit)[64], int i, int mode = 0, int decrypt = 0);
+void DES(unsigned (*pta)[64], unsigned (*subkeya)[16][48], unsigned (*ct)[2][32], unsigned (*ctbit)[64], int i, int mode = 0,
+         int decrypt = 0);
 
 // generates 16 48bit subkeys for DES from a 64 bit key
-void DESkeygenerate(std::string &key, unsigned (*keya)[16][48]);
+void generateSubKeys(std::string &key, unsigned (*keya)[16][48]);
 
 // takes a key as input and generates the keys required for certain encryption
 // algorithms
