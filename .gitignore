@@ -10,3 +10,5 @@ test/
 *.o
 *.txt
 
+.clang-format
+
