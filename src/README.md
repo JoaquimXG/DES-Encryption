@@ -21,7 +21,7 @@ Optionally an output file can also be provided.
     - Padding is added to the end of the file to ensure it is a multiple of 8 bytes in length. Padding consists of null bytes.
     - The number of encryption blocks is calculated, numberOfBlocks
     - The input file is converted into binary into a 2 dimensional array, `[numberOfBlocks][64]`
-4. 
+4. Perform encryption
 
 
 

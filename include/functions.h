@@ -39,7 +39,7 @@ void DES(unsigned (*pta)[64], unsigned (*subkeya)[16][48], unsigned (*ct)[2][32]
          int decrypt = 0);
 
 // generates 16 48bit subkeys for DES from a 64 bit key
-void generateSubKeys(std::string &key, unsigned (*keya)[16][48]);
+void generateSubKeys(std::string &key, Options encryptOpts);
 
 // takes a key as input and generates the keys required for certain encryption
 // algorithms

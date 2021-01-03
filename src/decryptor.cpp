@@ -30,7 +30,12 @@ int main(int argc, char *argv[]) {
 
   unsigned keya[16][48];
   // gets key and generates subkeys
-  generateSubKeys(key, &keya);
+  generateSubKeys(key, encryptOpts);
+  
+  for (int i = 0; i< 16; i++){
+    for (int j = 0; j< 48; j++)
+    keya[i][j] = encryptOpts.keyArray[i][j];
+  }
 
   // converting hex format txt file to string variable, measuring the length,
   // padding and creating a suitable length array to contain cypher text binary

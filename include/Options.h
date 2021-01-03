@@ -18,7 +18,11 @@ struct Options {
 
   // User input value for key
   std::string key;
+
+  unsigned ivArray[64];
+  unsigned keyArray[16][48];
 };
+
 
 enum Mode { ECB, CBC, PCBC, CFB, OFB };
 

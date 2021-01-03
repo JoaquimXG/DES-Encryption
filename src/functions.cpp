@@ -257,7 +257,7 @@ void decimaltobinary(int integer, unsigned binarya[], int size) {
  * @param &key A reference to std::string for the key input
  * @param (*keya)[16][48] A pointer to a 2 dimensional array, 16 bits * 48 bit to store the 16 keys
  */
-void generateSubKeys(std::string &key, unsigned (*keya)[16][48]) {
+void generateSubKeys(std::string &key, Options encryptOpts) {
 
   unsigned keyPC1[2][28];
   unsigned keya64bit[64];
@@ -272,7 +272,8 @@ void generateSubKeys(std::string &key, unsigned (*keya)[16][48]) {
     leftShift(&keyPC1[1][0], 28, bitRotationTable[i]);
 
     for (int j = 0; j < 48; j++) {
-      (*keya)[i][j] = keyPC1[0][permutedChoice2[j]];
+      //(*keya)[i][j] = keyPC1[0][permutedChoice2[j]];
+      encryptOpts.keyArray[i][j] = keyPC1[0][permutedChoice2[j]];
     }
   }
 }

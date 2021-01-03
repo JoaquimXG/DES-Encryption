@@ -57,16 +57,19 @@ clean:
 .PHONY: test
 test:
 	$(MAKE) $(ODIR)/.sentinel
+	rm -rf test/
 	mkdir -p test 
 	ls -al >> test/input.txt
 	./encryptor test/input.txt -o test/encrypted.hex
 	./decryptor test/encrypted.hex -o test/decrypted.txt
+	./encryptor test/input.txt -o test/encryptedofb.hex -m ofb
+	./decryptor test/encryptedofb.hex -o test/decryptedofb.txt -m ofb
 	@echo 
 	@echo 
 	@echo "Running diff on input and decrypted files -------------------------"
 	@echo 
-	diff test/input.txt test/decrypted.txt
 	cat test/decrypted.txt	
+	cat test/decryptedofb.txt	
 
 
 playground: $(ODIR)/playground.o

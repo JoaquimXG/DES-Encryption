@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     return -2;
   }
 
-  // TODO potentially remove this
+  // TODO remove this
   int mode = encryptOpts.mode;
   int encryptmethod = encryptOpts.encryptmethod;
   int encrypt_size = encryptOpts.encrypt_size;
@@ -32,20 +32,29 @@ int main(int argc, char *argv[]) {
   charToBit(iv, IVa);
 
   unsigned keya[16][48];
-  generateSubKeys(key, &keya);
+  generateSubKeys(key, encryptOpts);
 
-  // converting file to string variable then to plaintext array and adding
-  // padding consrtuct string varaible by iterating through file buffer
+  //TODO Remove this
+  for (int i = 0; i< 16; i++){
+    for (int j = 0; j< 48; j++)
+    keya[i][j] = encryptOpts.keyArray[i][j];
+  }
+
+
+
+  // Consrtuct string varaible by iterating through file buffer
   std::string inputFileString{std::istreambuf_iterator<char>(input),
                             std::istreambuf_iterator<char>()};
 
   // calculate the length of the last chunk of data to be encrypted and the
   // difference from 8 bytes
-  int padding = (8 - inputFileString.size()) % 8;
-  int encryption_block_num = (inputFileString.size() + padding) / 8;
+  int fileLength = inputFileString.size();
+  int padding = (8 - (fileLength % 8)) % 8;
+  int encryption_block_num = (fileLength + padding) / 8;
   unsigned pta[encryption_block_num][64];
 
   charToBit(inputFileString, &pta[0][0]);
+
   if (padding > 0) {
     // pointer to the last position in array
     unsigned *tempit = &pta[(encryption_block_num)-1][64 - 1];
@@ -167,15 +176,15 @@ int main(int argc, char *argv[]) {
   }
 
   // Convert binary ctbit array into characters
-  unsigned int output[file_contents.size()];
-  for (int i = 0; i < file_contents.size() + padding; i++) {
+  unsigned int output[fileLength];
+  for (int i = 0; i < fileLength + padding; i++) {
     unsigned int tempc = binarytodecimal(&ctbit[0][i * 8], 8);
     output[i] = tempc;
   }
   std::cout << std::hex;
 
-  arrayout(output, file_contents.size() + padding, 9999999, 1, 1);
-  arrayout(output, file_contents.size() + padding, 16, 0, 1);
+  arrayout(output, fileLength + padding, 9999999, 1, 1);
+  arrayout(output, fileLength + padding, 16, 0, 1);
 
   return 0;
 }
