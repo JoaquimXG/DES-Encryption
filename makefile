@@ -42,6 +42,22 @@ $(ODIR)/.sentinel: $(OBJ) $(CRYPT_OBJ)
 	$(CC) -g -o crypt $(OBJ) $(CRYPT_OBJ) $(CFLAGS)
 	touch $(ODIR)/.sentinel
 
+.PHONY: test
+test: 
+	$(MAKE) $(ODIR)/.sentinel
+	rm -rf test/
+	mkdir -p test 
+	ls -l >> test/input.txt
+	./OLDencryptor test/input.txt -o test/OLDencrypted.hex
+	./crypt encrypt test/input.txt -o test/encrypted.txt
+	./crypt decrypt test/OLDencrypted.hex -o decrypted.txt
+	./OLDdecryptor test/encrypted.hex -o test/OLDdecrypted.txt
+	@echo 
+	@echo "Running diff on input and decrypted files -------------------------"
+	@echo 
+	cat test/decrypted.txt
+	cat test/OLDdecrypted.txt
+
 .PHONY: all
 all: 
 	$(MAKE)
@@ -70,7 +86,7 @@ OLDdecryptor: $(OBJ) $(DECRYPT_OBJ)
 # Rule to perform the most basic tests
 .PHONY: OLDtest
 OLDtest:
-	$(MAKE) $(ODIR)/.sentinel
+	$(MAKE) OLD
 	rm -rf test/
 	mkdir -p test 
 	ls -l >> test/input.txt
