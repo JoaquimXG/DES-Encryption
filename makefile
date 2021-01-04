@@ -1,3 +1,4 @@
+#TODO Separate old dependancies from new and remove old rules
 SHELL := bash
 .SHELLFLAGS := -eu -o pipefail -c  
 .DELETE_ON_ERROR:
@@ -19,7 +20,7 @@ DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 # Converting object file names to include ODIR
 # encryptor and decryptor must be compiled separately
 # as both contain 'main' functions
-_OBJ = OLDdes.o OLDfunctions.o OLDpermutations.o EncryptionParameters.o
+_OBJ = OLDdes.o OLDfunctions.o OLDpermutations.o EncryptionParameters.o 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 _ENCRYPT_OBJ = OLDencryptor.o
@@ -28,14 +29,28 @@ ENCRYPT_OBJ = $(patsubst %,$(ODIR)/%,$(_ENCRYPT_OBJ))
 _DECRYPT_OBJ = OLDdecryptor.o
 DECRYPT_OBJ = $(patsubst %,$(ODIR)/%,$(_DECRYPT_OBJ))
 
+_CRYPT_OBJ = crypt.o
+CRYPT_OBJ = $(patsubst %,$(ODIR)/%,$(_CRYPT_OBJ))
+
 # Rule for compiling any object file from .cpp file
 $(ODIR)/%.o: src/%.cpp $(DEPS)
 	$(CC) -g -c -o $@ $< $(CFLAGS)
 
+# Rule for compiling both binaries, encryptor and decryptor
+# Sentinel file is used to ensure all results are up to date
+$(ODIR)/.sentinel: $(OBJ) $(CRYPT_OBJ)
+	$(CC) -g -o crypt $(OBJ) $(CRYPT_OBJ) $(CFLAGS)
+	touch $(ODIR)/.sentinel
+
+.PHONY: all
+all: 
+	$(MAKE)
+	$(MAKE) OLD
+
 # Rule to tidy any output
 .PHONY: clean
 clean:
-	rm -f $(ODIR)/*.o *~ core $(IDIR)/*~ OLDencryptor OLDdecryptor 
+	rm -f $(ODIR)/*.o *~ core $(IDIR)/*~ OLDencryptor OLDdecryptor crypt play
 	rm -rf test
 
 # Rule for compiling both OLD binaries, encryptor and decryptor

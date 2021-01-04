@@ -4,10 +4,13 @@ OLDdecryptor
 OLDencryptor
 decryptor
 encryptor
+crypt
 
 /src/obj/
 
 test/
+
+
 
 *.o
 *.txt
