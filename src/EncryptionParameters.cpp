@@ -1,6 +1,6 @@
 #include "../include/EncryptionParameters.h"
-#include "../include/functions.h"
-#include "../include/permutations.h"
+#include "../include/OLDfunctions.h"
+#include "../include/OLDpermutations.h"
 
 
 EncryptionParameters::EncryptionParameters(std::string iv, std::string key){

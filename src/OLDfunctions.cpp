@@ -1,5 +1,5 @@
-#include "../include/functions.h"
-#include "../include/permutations.h"
+#include "../include/OLDfunctions.h"
+#include "../include/OLDpermutations.h"
 #include <bitset>
 #include <fstream>
 #include <getopt.h>

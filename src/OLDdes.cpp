@@ -1,5 +1,5 @@
-#include "../include/functions.h"
-#include "../include/permutations.h"
+#include "../include/OLDfunctions.h"
+#include "../include/OLDpermutations.h"
 
 // TODO Split this up into smaller, more manageable functions
 void DES(unsigned (*pta)[64], unsigned (*subkeya)[16][48],

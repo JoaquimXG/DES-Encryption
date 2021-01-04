@@ -1,7 +1,6 @@
-#include "../include/Options.h"
-#include "../include/EncryptionParameters.h"
-#include "../include/functions.h"
-#include "../include/permutations.h"
+#include "../include/OLDOptions.h"
+#include "../include/OLDfunctions.h"
+#include "../include/OLDpermutations.h"
 
 extern std::ifstream input;
 extern std::ofstream output;
