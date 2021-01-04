@@ -213,6 +213,40 @@ void decimaltobinary(int integer, unsigned binarya[], int size) {
   }
 }
 
+//TODO could this function also not just return the keys
+/* 
+ * Generates 16 48bit subkeys for DES from a 64 bit key.
+ * The 64 bit key is first converted from characters to binary.
+ * 56 bits are then selected from the key using the Permuted Choice 1 table
+ * This 56 bit key is split in half into two 28 bit keys.
+ * For 16 rounds,
+ * Each 28 bit key is left shifted either 1 or 2 bits in a predefined order
+ * as defined by bitRotationTable.
+ * 48 bits are then selected from a combination of the 28 bit keys using 
+ * the Permuted Choice 2 table to form the each 48 bit key.
+ *
+ * @param &key A reference to std::string for the key input
+ * @param (*keya)[16][48] A pointer to a 2 dimensional array, 16 bits * 48 bit to store the 16 keys
+ */
+void generateSubKeys(std::string &key, unsigned (*keya)[16][48] ) {
+
+  unsigned keyPC1[2][28];
+  unsigned keya64bit[64];
+  charToBit(key, keya64bit);
+
+  for (int i = 0; i < 56; i++) {
+    keyPC1[0][i] = keya64bit[permutedChoice1[i]];
+  }
+
+  for (int i = 0; i < 16; i++) {
+    leftShift(&keyPC1[0][0], 28, bitRotationTable[i]);
+    leftShift(&keyPC1[1][0], 28, bitRotationTable[i]);
+
+    for (int j = 0; j < 48; j++) {
+      (*keya)[i][j] = keyPC1[0][permutedChoice2[j]];
+    }
+  }
+}
 void hextobit(std::string file_contents, unsigned *array) {
   int size = file_contents.size();
   auto fileit = &file_contents[0];

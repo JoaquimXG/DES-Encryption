@@ -20,27 +20,15 @@ int main(int argc, char *argv[]) {
     return -2;
   }
 
-  // TODO remove this
   int mode = encryptOpts.mode;
   int encryptmethod = encryptOpts.encryptmethod;
   int encrypt_size = encryptOpts.encrypt_size;
 
-  EncryptionParameters params(encryptOpts.iv, encryptOpts.key);
-
-  //TODO convert to using the value of ivArray in params
-  //Need to go through this whole file and fine every instance of IVa
   unsigned IVa[64];
-  for (int i = 0; i< 64; i++){
-      IVa[i] = params.ivArray[i];
-  }
+  charToBit(encryptOpts.iv, IVa);
 
   unsigned keya[16][48];
-  
-  for (int i = 0; i< 16; i++){
-    for (int j = 0; j< 48; j++)
-    keya[i][j] = params.keyArray[i][j];
-  }
-
+  generateSubKeys(encryptOpts.key, &keya);
 
   // Consrtuct string varaible by iterating through file buffer
   std::string inputFileString{std::istreambuf_iterator<char>(input),

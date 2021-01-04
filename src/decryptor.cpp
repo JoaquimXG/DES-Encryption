@@ -19,30 +19,15 @@ int main(int argc, char *argv[]) {
     return -2;
   }
 
-  // TODO potentially remove this
   int mode = encryptOpts.mode;
   int encryptmethod = encryptOpts.encryptmethod;
   int encrypt_size = encryptOpts.encrypt_size;
-  std::string iv = encryptOpts.iv;
-  std::string key = encryptOpts.key;
-
-  std::cout << "Passing iv: " <<encryptOpts.iv<<"\n";
-
-  EncryptionParameters params(iv, key);
 
   unsigned IVa[64];
-
-  for (int i = 0; i< 64; i++){
-    std::cout << params.ivArray[i];
-    IVa[i] = params.ivArray[i];
-  }
+  charToBit(encryptOpts.iv, IVa);
 
   unsigned keya[16][48];
-  
-  for (int i = 0; i< 16; i++){
-    for (int j = 0; j< 48; j++)
-    keya[i][j] = params.keyArray[i][j];
-  }
+  generateSubKeys(encryptOpts.key, &keya);
 
   // converting hex format txt file to string variable, measuring the length,
   // padding and creating a suitable length array to contain cypher text binary

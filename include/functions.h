@@ -47,6 +47,9 @@ void getkey(std::string key, unsigned (*keya)[16][48]);
 // std::ifstream input to utilise
 void getfile();
 
+// Generates subkeys for DES
+void generateSubKeys(std::string &key, unsigned (*keya)[16][48] );
+
 // converts a hex string into binary array form
 void hextobit(std::string file_contents, unsigned *array);
 
