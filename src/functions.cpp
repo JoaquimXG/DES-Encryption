@@ -54,31 +54,6 @@ template int arrayout(unsigned array[], int size, int split, int file,
                       bool hex);
 template int arrayout(char array[], int size, int split, int file, bool hex);
 
-// TODO Delete this 
-// array to be shifted, size of array, size of shift to be performed
-void leftShiftOld(unsigned array[], int arrayLength, int shiftSize) {
-  if (shiftSize >= arrayLength) {
-    shiftSize = shiftSize % arrayLength;
-  }
-
-  int hold[shiftSize];
-  for (int i = 0; i < shiftSize; i++) {
-    hold[i] = *array;
-    array++;
-  }
-
-  for (int i = 0; i < (arrayLength - shiftSize); i++) {
-    *(array - shiftSize) = *array;
-    array++;
-  }
-  array--;
-
-  for (int i = (shiftSize - 1); i > -1; i--) {
-    *array = hold[i];
-    array--;
-  }
-}
-
 /*
  * Arithmetic left shift, modified array in place.
  * Moves every element in an array to the left 'shiftSize' number of times.
@@ -129,6 +104,7 @@ void leftShift(unsigned inputArray[], int arrayLength, int shiftSize) {
  * @return 0
  */
 int charToBit(std::string inString, unsigned outArray[]) {
+  std::cout << "------------------------ inString: " <<inString <<"\n";
   int stringLength = inString.size();
   for (int i = 0; i < stringLength; i++) {
 
@@ -147,18 +123,14 @@ int charToBit(std::string inString, unsigned outArray[]) {
 // the size of the arrays to be XOR'd
 int XOR(unsigned first[], unsigned second[], unsigned result[], int size) {
   for (int i = 0; i < size; i++) {
-    // std::cout<<"\nfirst*: "<<*first<<"      *Second: "<<*second;
     if (*first == *second) {
-      // std::cout<<"\n==";
       *result = 0;
     } else {
-      // std::cout<<"\n!=";
       *result = 1;
     }
     first++;
     second++;
     result++;
-    // std::cout<<"\n*result: "<<*result;
   }
   return 0;
 }
@@ -241,64 +213,6 @@ void decimaltobinary(int integer, unsigned binarya[], int size) {
   }
 }
 
-
-//TODO could this function also not just return the keys
-/* 
- * Generates 16 48bit subkeys for DES from a 64 bit key.
- * The 64 bit key is first converted from characters to binary.
- * 56 bits are then selected from the key using the Permuted Choice 1 table
- * This 56 bit key is split in half into two 28 bit keys.
- * For 16 rounds,
- * Each 28 bit key is left shifted either 1 or 2 bits in a predefined order
- * as defined by bitRotationTable.
- * 48 bits are then selected from a combination of the 28 bit keys using 
- * the Permuted Choice 2 table to form the each 48 bit key.
- *
- * @param &key A reference to std::string for the key input
- * @param (*keya)[16][48] A pointer to a 2 dimensional array, 16 bits * 48 bit to store the 16 keys
- */
-void generateSubKeys(std::string &key, Options encryptOpts) {
-
-  unsigned keyPC1[2][28];
-  unsigned keya64bit[64];
-  charToBit(key, keya64bit);
-
-  for (int i = 0; i < 56; i++) {
-    keyPC1[0][i] = keya64bit[permutedChoice1[i]];
-  }
-
-  for (int i = 0; i < 16; i++) {
-    leftShift(&keyPC1[0][0], 28, bitRotationTable[i]);
-    leftShift(&keyPC1[1][0], 28, bitRotationTable[i]);
-
-    for (int j = 0; j < 48; j++) {
-      //(*keya)[i][j] = keyPC1[0][permutedChoice2[j]];
-      encryptOpts.keyArray[i][j] = keyPC1[0][permutedChoice2[j]];
-    }
-  }
-}
-
-// TODO Delete this
-// takes file as input with error checking, requires there to be a valid
-// std::ifstream input to utilise
-void getfile() {
-  std::string pt;
-  bool ptcheck = 0;
-  while (!ptcheck) {
-    std::cout << "Please input .txt name: ";
-    std::cin >> pt;
-    if (pt.find(".txt") != std::string::npos) {
-      input.open(pt.c_str());
-      if (!input.is_open()) {
-        std::cout << "\n-------------------Input directory not "
-                     "found-------------------\n";
-        continue;
-      }
-      ptcheck = 1;
-    }
-  }
-}
-
 void hextobit(std::string file_contents, unsigned *array) {
   int size = file_contents.size();
   auto fileit = &file_contents[0];
@@ -316,10 +230,9 @@ void hextobit(std::string file_contents, unsigned *array) {
 // Parses command line arguments
 // Returns 0 if arguments are correct, -1 if there is a general error with
 // arguemnts, -2 if a file can't be opened
-int parseCommandLineArguments(int argc, char *argv[], Options encryptOpts,
+int parseCommandLineArguments(int argc, char *argv[], Options* encryptOpts,
                               bool decrypt) {
   std::string outputFileName;
-  std::string inputFileName;
   std::string modeString;
 
   // Using getopt library to parse command line arguments
@@ -344,13 +257,13 @@ int parseCommandLineArguments(int argc, char *argv[], Options encryptOpts,
       if (strlen(optarg) != 8) {
         return -2;
       };
-      encryptOpts.iv = optarg;
+      (*encryptOpts).iv = optarg;
       break;
     case 'k':
       if (strlen(optarg) != 8) {
         return -2;
       };
-      encryptOpts.key = optarg;
+      (*encryptOpts).key = optarg;
       break;
 
     // Return with error if either an unknown option is passed or if there are
@@ -366,8 +279,8 @@ int parseCommandLineArguments(int argc, char *argv[], Options encryptOpts,
       // Set the input file name to the first non-option argument
       // if inputFileName has already been set then there are too many
       // commandline arguments
-      if (inputFileName.empty()) {
-        inputFileName = optarg;
+      if ((*encryptOpts).inputFileName.empty()) {
+        (*encryptOpts).inputFileName = optarg;
         break;
       } else {
         return -1;
@@ -376,7 +289,7 @@ int parseCommandLineArguments(int argc, char *argv[], Options encryptOpts,
   }
 
   // Handle input file not being set
-  if (inputFileName.empty()) {
+  if ((*encryptOpts).inputFileName.empty()) {
     if (decrypt) {
       std::cout << "[-] Please provide a file to decrypt\n";
     } else {
@@ -384,7 +297,7 @@ int parseCommandLineArguments(int argc, char *argv[], Options encryptOpts,
     }
     return -1;
   } else {
-    input.open(inputFileName.c_str());
+    input.open((*encryptOpts).inputFileName.c_str());
     if (!input.is_open()) {
       std::cout << "[-] ------------ Can't open input file ------------\n";
       return -2;
@@ -404,16 +317,16 @@ int parseCommandLineArguments(int argc, char *argv[], Options encryptOpts,
 
   // Handle no Key set
   // TODO generate a random key and display it to the user at the end
-  if (encryptOpts.key.empty()) {
+  if ((*encryptOpts).key.empty()) {
     std::cout << "[-] No key was chosen, using default (00000000)\n";
-    encryptOpts.key = "00000000";
+    (*encryptOpts).key = "00000000";
   }
 
   // Handle no IV set
   // TODO generate a random IV and display it to the user at the end
-  if (encryptOpts.iv.empty()) {
+  if ((*encryptOpts).iv.empty()) {
     std::cout << "[-] No IV was chosen, using default (00000000)\n";
-    encryptOpts.iv = "00000000";
+    (*encryptOpts).iv = "00000000";
   }
 
   // Handle mode option, either a mode arguement was never passed and the
@@ -421,9 +334,9 @@ int parseCommandLineArguments(int argc, char *argv[], Options encryptOpts,
   if (modeString.empty()) {
     std::cout
         << "[+] No mode of operation was chosen, using default (ECB Mode)\n";
-    encryptOpts.mode = ECB;
-    encryptOpts.encrypt_size = 64;
-    encryptOpts.encryptmethod = DES_m;
+    (*encryptOpts).mode = ECB;
+    (*encryptOpts).encrypt_size = 64;
+    (*encryptOpts).encryptmethod = DES_m;
   } else {
     if (parseEncryptionModeArg(modeString, encryptOpts) == -1) {
       std::cout << "[-] No valid encryption mode selected\n";
@@ -441,32 +354,32 @@ int parseCommandLineArguments(int argc, char *argv[], Options encryptOpts,
   return 0;
 }
 
-int parseEncryptionModeArg(std::string encryptionArg, Options encryptOpts) {
+int parseEncryptionModeArg(std::string encryptionArg, Options *encryptOpts) {
   if (encryptionArg == "ecb" || encryptionArg == "ECB") {
     std::cout << "[+] Utilising ECB Mode of operation\n";
-    encryptOpts.mode = ECB;
-    encryptOpts.encrypt_size = 64;
+    (*encryptOpts).mode = ECB;
+    (*encryptOpts).encrypt_size = 64;
   } else if (encryptionArg == "cbc" || encryptionArg == "CBC") {
     std::cout << "[+] Utilising CBC Mode of operation\n";
-    encryptOpts.mode = CBC;
+    (*encryptOpts).mode = CBC;
   } else if (encryptionArg == "pcbc" || encryptionArg == "PCBC") {
     std::cout << "[+] Utilising PCBC Mode of operation\n";
-    encryptOpts.mode = PCBC;
+    (*encryptOpts).mode = PCBC;
   } else if (encryptionArg == "cfb" || encryptionArg == "CFB") {
     std::cout << "[+] Utilising CFB Mode of operation\n";
-    encryptOpts.mode = CFB;
-    encryptOpts.encrypt_size = 8;
+    (*encryptOpts).mode = CFB;
+    (*encryptOpts).encrypt_size = 8;
   } else if (encryptionArg == "ofb" || encryptionArg == "OFB") {
     std::cout << "[+] Utilising OFB Mode of operation\n";
-    encryptOpts.mode = OFB;
-    encryptOpts.encrypt_size = 8;
+    (*encryptOpts).mode = OFB;
+    (*encryptOpts).encrypt_size = 8;
   } else {
     return -1;
   }
 
   // Currently hardcoding this as only one encryption method has been developed
   // for the time being
-  encryptOpts.encryptmethod = DES_m;
+  (*encryptOpts).encryptmethod = DES_m;
   return 0;
 }
 

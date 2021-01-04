@@ -13,14 +13,15 @@ struct Options {
   // modes (OFB ,OFB)
   int encrypt_size;
 
+  //TODO remove, moving to EncryptionParameter
   // User input value for IV
   std::string iv;
 
   // User input value for key
   std::string key;
 
-  unsigned ivArray[64];
-  unsigned keyArray[16][48];
+  std::string inputFileName;
+
 };
 
 

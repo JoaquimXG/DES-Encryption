@@ -13,13 +13,13 @@ CFLAGS=-I$(IDIR)
 ODIR=src/obj
 
 # Converting header file names to include IDIR
-_DEPS = permutations.h functions.h
+_DEPS = permutations.h functions.h EncryptionParameters.h Options.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 # Converting object file names to include ODIR
 # encryptor and decryptor must be compiled separately
 # as both contain 'main' functions
-_OBJ = des.o functions.o permutations.o
+_OBJ = des.o functions.o permutations.o EncryptionParameters.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 _ENCRYPT_OBJ = encryptor.o

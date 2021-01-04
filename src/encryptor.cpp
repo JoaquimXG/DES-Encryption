@@ -1,4 +1,5 @@
 #include "../include/Options.h"
+#include "../include/EncryptionParameters.h"
 #include "../include/functions.h"
 #include "../include/permutations.h"
 #include <iomanip>
@@ -10,13 +11,11 @@ int main(int argc, char *argv[]) {
 
   Options encryptOpts;
 
-  int result = parseCommandLineArguments(argc, argv, encryptOpts);
+  int result = parseCommandLineArguments(argc, argv, &encryptOpts);
   switch (result) {
-  // Command line arguments incorrect
   case -1:
     printUsage();
     return -1;
-  // File handling failure e.g. can't open file
   case -2:
     return -2;
   }
@@ -25,20 +24,23 @@ int main(int argc, char *argv[]) {
   int mode = encryptOpts.mode;
   int encryptmethod = encryptOpts.encryptmethod;
   int encrypt_size = encryptOpts.encrypt_size;
-  std::string iv = encryptOpts.iv;
-  std::string key = encryptOpts.key;
 
+  EncryptionParameters params(encryptOpts.iv, encryptOpts.key);
+
+  //TODO convert to using the value of ivArray in params
+  //Need to go through this whole file and fine every instance of IVa
   unsigned IVa[64];
-  charToBit(iv, IVa);
+  for (int i = 0; i< 64; i++){
+      IVa[i] = params.ivArray[i];
+  }
 
   unsigned keya[16][48];
-  generateSubKeys(key, encryptOpts);
-
-  //TODO Remove this
+  
   for (int i = 0; i< 16; i++){
     for (int j = 0; j< 48; j++)
-    keya[i][j] = encryptOpts.keyArray[i][j];
+    keya[i][j] = params.keyArray[i][j];
   }
+
 
   // Consrtuct string varaible by iterating through file buffer
   std::string inputFileString{std::istreambuf_iterator<char>(input),
@@ -51,6 +53,7 @@ int main(int argc, char *argv[]) {
   int encryption_block_num = (fileLength + padding) / 8;
   unsigned pta[encryption_block_num][64];
 
+  std::cout << "SHould be converting string here ----------------------------------------------";
   charToBit(inputFileString, &pta[0][0]);
 
   if (padding > 0) {
@@ -61,6 +64,7 @@ int main(int argc, char *argv[]) {
       tempit--;
     }
   }
+
 
   // Text encryption
   // cypher text binary output to be converted to hex or ascii
@@ -89,7 +93,7 @@ int main(int argc, char *argv[]) {
       else if (mode == CFB || mode == OFB) {
         // iterate through each encryption block that is a portion of the
         // current block(64) if encrypt size is 64 then this will only go
-        // throuhg a single loop if e_size is 16 then it will loop 4 times
+        // through a single loop if e_size is 16 then it will loop 4 times
         // (16*4)=64
         for (int k = 0; k < (64 / encrypt_size); k++) {
           if (k == 0) {

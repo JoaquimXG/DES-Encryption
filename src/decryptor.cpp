@@ -1,4 +1,5 @@
 #include "../include/Options.h"
+#include "../include/EncryptionParameters.h"
 #include "../include/functions.h"
 #include "../include/permutations.h"
 
@@ -9,7 +10,7 @@ int main(int argc, char *argv[]) {
 
   Options encryptOpts;
 
-  int result = parseCommandLineArguments(argc, argv, encryptOpts, true);
+  int result = parseCommandLineArguments(argc, argv, &encryptOpts, true);
   switch (result) {
   case -1:
     printUsage();
@@ -25,16 +26,22 @@ int main(int argc, char *argv[]) {
   std::string iv = encryptOpts.iv;
   std::string key = encryptOpts.key;
 
+  std::cout << "Passing iv: " <<encryptOpts.iv<<"\n";
+
+  EncryptionParameters params(iv, key);
+
   unsigned IVa[64];
-  charToBit(iv, IVa);
+
+  for (int i = 0; i< 64; i++){
+    std::cout << params.ivArray[i];
+    IVa[i] = params.ivArray[i];
+  }
 
   unsigned keya[16][48];
-  // gets key and generates subkeys
-  generateSubKeys(key, encryptOpts);
   
   for (int i = 0; i< 16; i++){
     for (int j = 0; j< 48; j++)
-    keya[i][j] = encryptOpts.keyArray[i][j];
+    keya[i][j] = params.keyArray[i][j];
   }
 
   // converting hex format txt file to string variable, measuring the length,

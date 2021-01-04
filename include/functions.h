@@ -1,4 +1,5 @@
 #include "Options.h"
+#include "EncryptionParameters.h"
 #include <bitset>
 #include <fstream>
 #include <iostream>
@@ -38,9 +39,6 @@ void decimaltobinary(int integer, unsigned binarya[], int size);
 void DES(unsigned (*pta)[64], unsigned (*subkeya)[16][48], unsigned (*ct)[2][32], unsigned (*ctbit)[64], int i, int mode = 0,
          int decrypt = 0);
 
-// generates 16 48bit subkeys for DES from a 64 bit key
-void generateSubKeys(std::string &key, Options encryptOpts);
-
 // takes a key as input and generates the keys required for certain encryption
 // algorithms
 void getkey(std::string key, unsigned (*keya)[16][48]);
@@ -53,11 +51,11 @@ void getfile();
 void hextobit(std::string file_contents, unsigned *array);
 
 // Uses getopt to parse command line argumemts
-int parseCommandLineArguments(int argc, char *argv[], Options encryptOpts,
+int parseCommandLineArguments(int argc, char *argv[], Options* encryptOpts,
                               bool decrypt = false);
 
 // Just parses the encryption method argument
-int parseEncryptionModeArg(std::string, Options encryptOpts);
+int parseEncryptionModeArg(std::string, Options* encryptOpts);
 
 // Prints the usage for this program
 void printUsage(bool decrypt = false);
