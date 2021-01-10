@@ -11,6 +11,7 @@ CryptParameters::CryptParameters(int plainTextLength)
     : numberOfBlocks(0), padding(0), plainTextLength(plainTextLength),
       plainTextVect(nullptr),
       keyVect(16, std::vector<unsigned>(48, 0)), ivVect(64, 0){}; 
+
 /*
  * Generates 16 48bit subkeys for DES from a 64 bit key.
  * The 64 bit key is first converted from characters to binary.
@@ -54,7 +55,6 @@ int CryptParameters::parseInputFile(std::string inFileString) {
   // TODO Do I need to use the encryption size in the number of blocks
   // calculation???
   this->numberOfBlocks = (this->plainTextLength + this->padding) / 8;
-  std::cout << numberOfBlocks;
   this->plainTextVect = new std::vector<unsigned>(numberOfBlocks * 64, 0);
   
   charToBit(inFileString, *this->plainTextVect);
@@ -71,7 +71,7 @@ int CryptParameters::parseInputFile(std::string inFileString) {
 // TODO document toString
 std::string CryptParameters::toString() {
   std::stringstream returnString;
-  returnString << "\n\nIV: \n";
+  returnString << "\nIV: \n";
   returnString << vectorToString(this->ivVect);
 
   returnString << "\n\nKey Vect: \n";

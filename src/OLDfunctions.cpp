@@ -25,9 +25,9 @@ int arrayout(T array[], int size, int split, int file, bool hex) {
         std::cout << std::setfill('0') << std::setw(2) << *array;
       } else {
         if (*array == 1){
-          std::cout << "\033[34m" << *array << "\033[0m" << " ";
+          std::cout << "\033[34m" << *array << "\033[0m" << "";
         } else {
-          std::cout << "\033[31m" << *array << "\033[0m" << " ";
+          std::cout << "\033[31m" << *array << "\033[0m" << "";
         }
       }
       array++;
@@ -43,9 +43,9 @@ int arrayout(T array[], int size, int split, int file, bool hex) {
         output << std::hex << std::setfill('0') << std::setw(2) << *array;
       } else {
         if (*array == 1){
-          output << "\033[34m" << *array << "\033[0m" << " ";
+          output << "\033[34m" << *array << "\033[0m" << "";
         } else {
-          output << "\033[31m" << *array << "\033[0m" << " ";
+          output << "\033[31m" << *array << "\033[0m" << "";
         }
       }
       array++;
@@ -142,8 +142,7 @@ int XOR(unsigned first[], unsigned second[], unsigned result[], int size) {
   }
   return 0;
 }
-// result is the address the result will be stored,currently feistal is
-// resereved for arrays of 48 bits
+
 int feistal(unsigned *target, unsigned result[], unsigned key[]) {
   unsigned tempa[8][6];
   unsigned tempb[32];

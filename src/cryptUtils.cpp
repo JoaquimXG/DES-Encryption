@@ -68,7 +68,6 @@ int charToBit(std::string inString, std::vector<unsigned>& outVector) {
       outVector[(i*8)+j] = tempBitset[8-1-j];
     }
   }
-  std::cout << "\n";
   return 0;
 }
 
@@ -89,9 +88,9 @@ std::string vectorToString(std::vector<unsigned>& vect){
   std::stringstream returnString;
   for (auto i = vect.begin(); i != vect.end(); ++i){
       if (*i == 1){
-        returnString << "\033[34m" << *i << "\033[0m" << " ";
+        returnString << "\033[34m" << *i << "\033[0m" << "";
       } else {
-        returnString << "\033[31m" << *i << "\033[0m" << " ";
+        returnString << "\033[31m" << *i << "\033[0m" << "";
       }
   }
   return returnString.str();
@@ -104,9 +103,9 @@ std::string vectorToString2D(std::vector<std::vector<unsigned>>& vect){
     for (std::vector<unsigned>::const_iterator j = (*i).begin(); j != (*i).end(); ++j) 
     {
       if (*j == 1){
-        returnString << "\033[34m" << *j << "\033[0m" << " ";
+        returnString << "\033[34m" << *j << "\033[0m" << "";
       } else {
-        returnString << "\033[31m" << *j << "\033[0m" << " ";
+        returnString << "\033[31m" << *j << "\033[0m" << "";
       }
     }
     returnString << "\n";
