@@ -28,11 +28,6 @@ int main(int argc, char *argv[]) {
 
   unsigned keya[16][48];
   generateSubKeys(encryptOpts.key, &keya);
-  
-  arrayout(keya[0], 768, 48);
-  arrayout(IVa, 64, 64);
-
-  return 0;
 
   // Consrtuct string varaible by iterating through file buffer
   std::string inputFileString{std::istreambuf_iterator<char>(input),

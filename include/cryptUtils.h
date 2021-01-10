@@ -31,3 +31,8 @@ bool leftShift(std::vector<unsigned>& inVector, int shiftSize, int startPosition
  */
 int charToBit(std::string inString, std::vector<unsigned>& outVector);
 int charToBit(std::string inString, std::vector<std::vector<unsigned>>& outVector);
+
+
+//TODO document
+std::string vectorToString(std::vector<unsigned>& vect);
+std::string vectorToString2D(std::vector<std::vector<unsigned>>& vect);

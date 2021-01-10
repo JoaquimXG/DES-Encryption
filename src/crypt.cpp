@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
   };
 
   // DEBUG -- Print command line options
-  std::cout << opt.toString(opt);
+  //std::cout << opt.toString(opt);
 
   // Get input file contents
   std::string inFileString;
@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
   // Prepares encryption parameters
   CryptParameters params = CryptParameters(inFileString.size());
   params.generateSubKeys(opt.key);
-  charToBit(opt.iv, params.ivArray);
+  charToBit(opt.iv, params.ivVect);
   params.parseInputFile(inFileString);
 
   std::cout << params.toString();

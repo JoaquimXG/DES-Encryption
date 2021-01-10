@@ -11,7 +11,7 @@ class CryptParameters {
     CryptParameters(int plainTextLength);
 
     //IV converted to binary
-    std::vector<unsigned> ivArray;
+    std::vector<unsigned> ivVect;
 
     //Sixteen 48 bit subkeys for DES
     std::vector<std::vector<unsigned>> keyVect;

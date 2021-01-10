@@ -10,7 +10,7 @@
 CryptParameters::CryptParameters(int plainTextLength)
     : numberOfBlocks(0), padding(0), plainTextLength(plainTextLength),
       plainTextVect(nullptr),
-      keyVect(16, std::vector<unsigned>(48, 0)), ivArray(64, 0){}; 
+      keyVect(16, std::vector<unsigned>(48, 0)), ivVect(64, 0){}; 
 /*
  * Generates 16 48bit subkeys for DES from a 64 bit key.
  * The 64 bit key is first converted from characters to binary.
@@ -33,9 +33,10 @@ void CryptParameters::generateSubKeys(std::string &key) {
     keyPermutedChoice1[i] = temporary64BitKey[permutedChoice1[i]];
   }
 
+
   for (int i = 0; i < 16; i++) {
     leftShift(keyPermutedChoice1, bitRotationTable[i], 28, 55);
-    leftShift(keyPermutedChoice1, bitRotationTable[i]);
+    leftShift(keyPermutedChoice1, bitRotationTable[i], 0, 27);
 
     for (int j = 0; j < 48; j++) {
       //(*keya)[i][j] = keyPermutedChoice1[0][permutedChoice2[j]];
@@ -71,42 +72,14 @@ int CryptParameters::parseInputFile(std::string inFileString) {
 std::string CryptParameters::toString() {
   std::stringstream returnString;
   returnString << "\n\nIV: \n";
-  for (std::vector<unsigned>::const_iterator i = this->ivArray.begin();
-      i != this->ivArray.end(); ++i){
-      if (*i == 1){
-        returnString << "\033[34m" << *i << "\033[0m" << " ";
-      } else {
-        returnString << "\033[31m" << *i << "\033[0m" << " ";
-      }
-  }
+  returnString << vectorToString(this->ivVect);
 
-  returnString << "\nKey Vect: \n";
-  for (std::vector<std::vector<unsigned>>::const_iterator i = this->keyVect.begin(); i != this->keyVect.end(); ++i) 
-  {
-    for (std::vector<unsigned>::const_iterator j = (*i).begin(); j != (*i).end(); ++j) 
-    {
-      if (*j == 1){
-        returnString << "\033[34m" << *j << "\033[0m" << " ";
-      } else {
-        returnString << "\033[31m" << *j << "\033[0m" << " ";
-      }
-    }
-    returnString << "\n";
-  }
+  returnString << "\n\nKey Vect: \n";
+  returnString << vectorToString2D(this->keyVect) << "\n";
 
   returnString << "\nPlain Text Vect: \n";
-  for (std::vector<unsigned>::const_iterator i =
-          (*this->plainTextVect).begin();
-          i != (*this->plainTextVect).end(); ++i) {
-      if (*i == 1){
-        returnString << "\033[34m" << *i << "\033[0m" << " ";
-      } else {
-        returnString << "\033[31m" << *i << "\033[0m" << " ";
-      }
-  }
-  returnString << "\n";
+  returnString << vectorToString(*this->plainTextVect) << "\n";
   
-
   returnString << "\nPlain Text Length: " << this->plainTextLength
                << "\nNumber of Blocks: " << this->numberOfBlocks
                << "\nPadding: " << this->padding << "\n";

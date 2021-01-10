@@ -1,6 +1,7 @@
 #include <bitset>
 #include "../include/cryptUtils.h"
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -64,7 +65,6 @@ int charToBit(std::string inString, std::vector<unsigned>& outVector) {
 
     std::bitset<8> tempBitset(inString.c_str()[i]);
     for (int j = 0; j < 8; j++) {
-        std::cout << (i*8)+j << ' ';
       outVector[(i*8)+j] = tempBitset[8-1-j];
     }
   }
@@ -84,3 +84,33 @@ int charToBit(std::string inString, std::vector<std::vector<unsigned>>& outVecto
   }
   return 0;
 }
+
+std::string vectorToString(std::vector<unsigned>& vect){
+  std::stringstream returnString;
+  for (auto i = vect.begin(); i != vect.end(); ++i){
+      if (*i == 1){
+        returnString << "\033[34m" << *i << "\033[0m" << " ";
+      } else {
+        returnString << "\033[31m" << *i << "\033[0m" << " ";
+      }
+  }
+  return returnString.str();
+};
+
+std::string vectorToString2D(std::vector<std::vector<unsigned>>& vect){
+  std::stringstream returnString;
+  for (auto i = vect.begin(); i != vect.end(); ++i) 
+  {
+    for (std::vector<unsigned>::const_iterator j = (*i).begin(); j != (*i).end(); ++j) 
+    {
+      if (*j == 1){
+        returnString << "\033[34m" << *j << "\033[0m" << " ";
+      } else {
+        returnString << "\033[31m" << *j << "\033[0m" << " ";
+      }
+    }
+    returnString << "\n";
+  }
+  return returnString.str();
+};
+
