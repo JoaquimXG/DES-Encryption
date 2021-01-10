@@ -23,13 +23,6 @@ Optionally an output file can also be provided.
     - The input file is converted into binary into a 2 dimensional array, `[numberOfBlocks][64]`
 4. Perform encryption
 
-
-
-
-3. 
-
-
-
 # Notes
 
 ## Objects

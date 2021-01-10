@@ -4,25 +4,23 @@
 #ifndef DESENCRYPTION_INCLUDE_ENCRYPTIONPARAMETERS_H_
 #define DESENCRYPTION_INCLUDE_ENCRYPTIONPARAMETERS_H_
 
-class EncryptionParameters {
+class CryptParameters {
   private:
 
-
-
   public:
-    EncryptionParameters(std::string iv, std::string key);
+    CryptParameters(int plainTextLength);
 
     //IV converted to binary
-    unsigned ivArray[64];
-    //Sixteen 48 bit subkeys for DES
-    unsigned keyArray[16][48];
+    std::vector<unsigned> ivArray;
 
+    //Sixteen 48 bit subkeys for DES
+    std::vector<std::vector<unsigned>> keyVect;
+
+    std::vector<unsigned>* plainTextVect;
+
+    int plainTextLength;
     int numberOfBlocks;
     int padding;
-    int fileLength;
-
-    //std::vector<unsigned> plainTextArray;
-    unsigned* plainTextArray[64];
 
     /* 
      * Generates 16 48bit subkeys for DES from a 64 bit key.
@@ -43,5 +41,8 @@ class EncryptionParameters {
     //TODO WRITE FULL DOC STRING
     int parseInputFile(std::string inputFileName);
 
+    int openOutputFile(std::string outputFileName);
+
+    std::string toString();
 };
 #endif

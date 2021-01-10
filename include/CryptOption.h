@@ -7,6 +7,8 @@ enum CryptMode { ECB, CBC, PCBC, CFB, OFB };
 
 enum CryptMethod { DES, AES };
 
+const int BYTE_SIZE = 8;
+
 /*
  * Primarily a container for the command line options passed to crypt
  * Also contains functions required to collect the arguments from the user
@@ -24,15 +26,7 @@ class CryptOption {
   // modes (OFB ,OFB)
   int cryptSize;
 
-  // User input value for iv and key
-  std::string iv;
 
-  std::string key;
-
-  std::string inputFileName;
-  std::string outputFileName;
-
-  int parseCommandLineArguments(CryptOption& opt, int argc, char* argv[]);
 
   int parseNonOptionArguments(CryptOption& opt, int argc, char* argv[]);
 
@@ -42,13 +36,21 @@ class CryptOption {
 
   void parseKeyAndIvArguments(CryptOption& opt);
 
-  void printUsage();
 
   public:
-  CryptOption(int argc, char* argv[]);
+  CryptOption();
+
+  int parseCommandLineArguments(CryptOption& opt, int argc, char* argv[]);
+
+  void printUsage();
 
   std::string toString(CryptOption& opt);
 
+  // User input value for iv and key
+  std::string iv;
+  std::string key;
+  std::string inputFileName;
+  std::string outputFileName;
 };
 
 #endif

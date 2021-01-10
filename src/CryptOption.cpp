@@ -4,11 +4,9 @@
 #include <sstream>
 #include <string.h>
 
-CryptOption::CryptOption(int argc, char *argv[]) {
-  if (this->parseCommandLineArguments(*this, argc, argv) < 0) {
-    this->printUsage();
-  };
-}
+CryptOption::CryptOption()
+    : cryptMode(ECB), decrypt(false), cryptMethod(DES), cryptSize(8*BYTE_SIZE),
+      inputFileName(), outputFileName(){};
 
 // Parses command line arguments
 // Returns 0 if arguments are correct, -1 if there is a general error with
@@ -65,11 +63,11 @@ int CryptOption::parseCommandLineArguments(CryptOption &opt, int argc,
     return -2;
 
   return 0;
-
 }
 
-//TODO Document parseNonOptionArguments
-int CryptOption::parseNonOptionArguments(CryptOption& opt, int argc, char* argv[]) {
+// TODO Document parseNonOptionArguments
+int CryptOption::parseNonOptionArguments(CryptOption &opt, int argc,
+                                         char *argv[]) {
   int nonOptionArgumentIndex = 0;
   int argumentIndex;
   for (argumentIndex = optind; argumentIndex < argc; argumentIndex++) {
@@ -110,7 +108,7 @@ void CryptOption::parseKeyAndIvArguments(CryptOption &opt) {
   }
 }
 
-//TODO document checkFileArguments
+// TODO document checkFileArguments
 int CryptOption::checkFileArguments(CryptOption &opt) {
   // Handle input file not being set
   if (opt.inputFileName.empty()) {
@@ -136,18 +134,14 @@ int CryptOption::checkFileArguments(CryptOption &opt) {
   return 0;
 }
 
-//TODO document checkEncryptionModeArgument
+// TODO document checkEncryptionModeArgument
 int CryptOption::checkEncryptionModeArgument(CryptOption &opt,
                                              std::string cryptModeArgument) {
   if (cryptModeArgument.empty()) {
     std::cout
         << "\n[+] No mode of operation was chosen, using default (ECB Mode)";
-    opt.cryptMode = ECB;
-    opt.cryptSize = 64;
   } else if (cryptModeArgument == "ecb" || cryptModeArgument == "ECB") {
     std::cout << "\n[+] Utilising ECB Mode of operation";
-    opt.cryptMode = ECB;
-    opt.cryptSize = 64;
   } else if (cryptModeArgument == "cbc" || cryptModeArgument == "CBC") {
     std::cout << "\n[+] Utilising CBC Mode of operation";
     opt.cryptMode = CBC;
@@ -170,7 +164,7 @@ int CryptOption::checkEncryptionModeArgument(CryptOption &opt,
   return 0;
 }
 
-//TODO document printUsage
+// TODO document printUsage
 void CryptOption::printUsage() {
   std::cout << "\nDES Decryptor\n\n\
 Usage:\n\
@@ -185,13 +179,13 @@ Options:\n\
     -m mode       Mode of operation [ECB | CBC | PCBC | CFB | OFB]\n";
 }
 
-//TODO document toString
+// TODO document toString
 std::string CryptOption::toString(CryptOption &opt) {
   std::ostringstream returnString;
   returnString << "\n\nIV: " << opt.iv << "\nKey: " << opt.key
                << "\nInput File: " << opt.inputFileName
                << "\nOutput File: " << opt.outputFileName
                << "\nCrypt Size: " << opt.cryptSize
-               << "\nCrypt Mode: " << opt.cryptMode << "\n";
+               << "\nCrypt Mode: " << opt.cryptMode << "\n\n";
   return returnString.str();
 }
