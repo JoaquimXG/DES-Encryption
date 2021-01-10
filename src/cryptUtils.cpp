@@ -63,10 +63,12 @@ int charToBit(std::string inString, std::vector<unsigned>& outVector) {
   for (int i = 0; i < stringLength; i++) {
 
     std::bitset<8> tempBitset(inString.c_str()[i]);
-    for (int j = 7; j > -1; j--) {
-      outVector[(i*8)+j] = tempBitset[j];
+    for (int j = 0; j < 8; j++) {
+        std::cout << (i*8)+j << ' ';
+      outVector[(i*8)+j] = tempBitset[8-1-j];
     }
   }
+  std::cout << "\n";
   return 0;
 }
 

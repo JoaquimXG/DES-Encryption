@@ -37,7 +37,6 @@ int main(int argc, char *argv[]) {
   charToBit(opt.iv, params.ivArray);
   params.parseInputFile(inFileString);
 
-  // DEBUG -- Print generated encryption parameters
   std::cout << params.toString();
 
 }
