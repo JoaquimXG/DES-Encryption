@@ -12,14 +12,14 @@ void DES(unsigned (*pta)[64], unsigned (*subkeya)[16][48],
     // iterates through plaintext and moves each value to a new position in ct
     // designated by the lookupIP array
     for (int k = 0; k < 64; k++) {
-      *aiterator = pta[i][lookupIP[k]];
+      *aiterator = pta[i][lookupInitalPermutation[k]];
       aiterator++;
     }
   } else if (mode == 1) {
     // iterates through plaintext and moves each value to a new position in ct
     // designated by the lookupIP array
     for (int k = 0; k < 64; k++) {
-      *aiterator = (*pta)[lookupIP[k]];
+      *aiterator = (*pta)[lookupInitalPermutation[k]];
       aiterator++;
     }
   }
@@ -53,7 +53,7 @@ void DES(unsigned (*pta)[64], unsigned (*subkeya)[16][48],
 
   for (int k = 0; k < 64; k++) {
     // how the fuck does this work
-    temporarya[k] = ct[0][0][lookupfp[k]];
+    temporarya[k] = ct[0][0][lookupFinalPermutation[k]];
   }
   // really need to find a better solution than this
   for (int k = 0; k < 64; k++) {

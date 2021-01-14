@@ -10,6 +10,9 @@ crypt
 
 test/
 
+unitTests/
+
+
 
 
 *.o

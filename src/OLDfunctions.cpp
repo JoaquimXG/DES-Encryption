@@ -152,7 +152,7 @@ int feistal(unsigned *target, unsigned result[], unsigned key[]) {
   // iterate through the target array moving each value to a new position in the
   // temp array based on the lookupE array
   for (int i = 0; i < 48; i++) {
-    *aiterator = target[lookupE[i]];
+    *aiterator = target[lookupFeistalExpansion[i]];
     // std::cout<<*aiterator<<":"<<target[lookupE[i]]<<":"<<*tempa[i]<<"-----";
     aiterator++;
     if ((i + 1) % 6 == 0) {
@@ -175,7 +175,7 @@ int feistal(unsigned *target, unsigned result[], unsigned key[]) {
     int row = binarytodecimal(&rowa[0], 2);
     int column = binarytodecimal(&columna[0], 4);
 
-    int sboxint = lookupSbox[i][row][column];
+    int sboxint = lookupSBox[i][row][column];
     unsigned binarytemp[4];
     // std::cout<<"\nsboxint: "<<sboxint;
     decimaltobinary(sboxint, &binarytemp[0], 4);
@@ -187,7 +187,7 @@ int feistal(unsigned *target, unsigned result[], unsigned key[]) {
   }
   // P Permutation
   for (int i = 0; i < 32; i++) {
-    result[i] = tempb[lookupP[i]];
+    result[i] = tempb[lookupFeistalPermutation[i]];
   }
 
   return 0;
@@ -242,15 +242,15 @@ void generateSubKeys(std::string &key, unsigned (*keya)[16][48] ) {
   charToBit(key, keya64bit);
 
   for (int i = 0; i < 56; i++) {
-    keyPC1[0][i] = keya64bit[permutedChoice1[i]];
+    keyPC1[0][i] = keya64bit[keyPermutedChoice1[i]];
   }
 
   for (int i = 0; i < 16; i++) {
-    leftShift(&keyPC1[0][0], 28, bitRotationTable[i]);
-    leftShift(&keyPC1[1][0], 28, bitRotationTable[i]);
+    leftShift(&keyPC1[0][0], 28, keyBitRotationTable[i]);
+    leftShift(&keyPC1[1][0], 28, keyBitRotationTable[i]);
 
     for (int j = 0; j < 48; j++) {
-      (*keya)[i][j] = keyPC1[0][permutedChoice2[j]];
+      (*keya)[i][j] = keyPC1[0][keyPermutedChoice2[j]];
     }
   }
 }

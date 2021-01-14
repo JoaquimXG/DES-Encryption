@@ -43,7 +43,6 @@ int main(int argc, char *argv[]) {
 
 
 //TODO Move these functions to an appropriate file and add docstrings
-
 std::string& getFileContents(std::string fileName, std::string& dumpString){
   std::ifstream fileStream;
   dumpString = "";
