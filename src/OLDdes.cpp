@@ -1,7 +1,6 @@
 #include "../include/OLDfunctions.h"
 #include "../include/OLDpermutations.h"
 
-// TODO Split this up into smaller, more manageable functions
 void DES(unsigned (*pta)[64], unsigned (*subkeya)[16][48],
          unsigned (*ct)[2][32], unsigned (*ctbit)[64], int i, int mode,
          int decrypt) {

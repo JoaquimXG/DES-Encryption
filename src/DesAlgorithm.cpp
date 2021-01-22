@@ -48,12 +48,12 @@ std::vector<unsigned> DesAlgorithm::DES(std::vector<std::vector<unsigned>>& keyG
   return returnVect;
 }
 
+
 std::vector<unsigned> DesAlgorithm::feistal(std::vector<unsigned>& input, std::vector<unsigned>& key){
   std::vector<unsigned> expandedInput(48);
   std::vector<unsigned> prePermutationP(32);
   std::vector<unsigned> result(32);
 
-  //Expansion from 32 to 48 bits
   for (int i = 0; i < 48; i++) {
     expandedInput[i] = input[lookupFeistalExpansion[i]];
   }

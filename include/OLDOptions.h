@@ -13,7 +13,6 @@ struct Options {
   // modes (OFB ,OFB)
   int encrypt_size;
 
-  //TODO remove, moving to EncryptionParameter
   // User input value for IV
   std::string iv;
 

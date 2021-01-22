@@ -8,21 +8,12 @@ CryptOption::CryptOption()
     : cryptMode(ECB), decrypt(false), cryptMethod(DES), cryptSize(8*BYTE_SIZE),
       inputFileName(), outputFileName(){};
 
-// Parses command line arguments
-// Returns 0 if arguments are correct, -1 if there is a general error with
-// arguemnts, -2 if a file can't be opened
-// Using getopt library to parse command line arguments
-//-: stands for any arguments that don't have options and corresponds with
-// case 1
-// TODO should you return if the IV is the wrong length???
-// Maybe the IV should just be padded, the problem is that it would
-// have to be padded in the same manner the next time as well
 int CryptOption::parseCommandLineArguments(CryptOption &opt, int argc,
                                            char *argv[]) {
   std::string cryptModeArgument;
 
   int option;
-  while ((option = getopt(argc, argv, "m:o:i:k:")) != -1) {
+  while ((option = getopt(argc, argv, "m:o:i:k:h")) != -1) {
     switch (option) {
     case 'm':
       cryptModeArgument = std::string(optarg);
@@ -42,6 +33,8 @@ int CryptOption::parseCommandLineArguments(CryptOption &opt, int argc,
       };
       opt.key = optarg;
       break;
+    case 'h':
+      return -1;
     case '?':
       printf("Unknown option: -%c\n", optopt);
       return -1;
@@ -51,22 +44,21 @@ int CryptOption::parseCommandLineArguments(CryptOption &opt, int argc,
     }
   }
 
-  if (parseNonOptionArguments(opt, argc, argv) == -1)
+  if (!parseNonOptionArguments(opt, argc, argv))
     return -1;
 
   parseKeyAndIvArguments(opt);
 
-  if (checkEncryptionModeArgument(opt, cryptModeArgument) == -1)
+  if (!checkEncryptionModeArgument(opt, cryptModeArgument))
     return -1;
 
-  if (checkFileArguments(opt) == -1)
+  if (!checkFileArguments(opt))
     return -2;
 
   return 0;
 }
 
-// TODO Document parseNonOptionArguments
-int CryptOption::parseNonOptionArguments(CryptOption &opt, int argc,
+bool CryptOption::parseNonOptionArguments(CryptOption &opt, int argc,
                                          char *argv[]) {
   int nonOptionArgumentIndex = 0;
   int argumentIndex;
@@ -78,8 +70,8 @@ int CryptOption::parseNonOptionArguments(CryptOption &opt, int argc,
       } else if (nonOptionArgument == "decrypt") {
         opt.decrypt = true;
       } else {
-        std::cout << "\n[-] Please choose either encrypt or decrypt";
-        return -1;
+        std::cout << "\n[-] Please choose to either encrypt or decrypt";
+        return false;
       }
       nonOptionArgumentIndex++;
     }
@@ -88,14 +80,13 @@ int CryptOption::parseNonOptionArguments(CryptOption &opt, int argc,
       opt.inputFileName = nonOptionArgument;
       nonOptionArgumentIndex++;
     } else {
-      return -1;
+      return false;
     }
   }
-  return 0;
+  return true;
 }
 
 // TODO generate a random key and IV and display them to the user at the end
-// TODO Document parseKeyAndIvArguments
 void CryptOption::parseKeyAndIvArguments(CryptOption &opt) {
   if (opt.key.empty()) {
     std::cout << "\n[-] No key was chosen, using default (00000000)";
@@ -108,8 +99,7 @@ void CryptOption::parseKeyAndIvArguments(CryptOption &opt) {
   }
 }
 
-// TODO document checkFileArguments
-int CryptOption::checkFileArguments(CryptOption &opt) {
+bool CryptOption::checkFileArguments(CryptOption &opt) {
   // Handle input file not being set
   if (opt.inputFileName.empty()) {
     if (opt.decrypt) {
@@ -117,7 +107,7 @@ int CryptOption::checkFileArguments(CryptOption &opt) {
     } else {
       std::cout << "\n[-] Please provide a file to encrypt";
     }
-    return -1;
+    return false;
   }
 
   // Handle output file not being set
@@ -131,11 +121,10 @@ int CryptOption::checkFileArguments(CryptOption &opt) {
     }
   }
 
-  return 0;
+  return true;
 }
 
-// TODO document checkEncryptionModeArgument
-int CryptOption::checkEncryptionModeArgument(CryptOption &opt,
+bool CryptOption::checkEncryptionModeArgument(CryptOption &opt,
                                              std::string cryptModeArgument) {
   if (cryptModeArgument.empty()) {
     std::cout
@@ -158,15 +147,14 @@ int CryptOption::checkEncryptionModeArgument(CryptOption &opt,
     opt.cryptSize = 8;
   } else {
     std::cout << "\n[-] No valid encryption mode selected";
-    return -1;
+    return false;
   }
 
-  return 0;
+  return true;
 }
 
-// TODO document printUsage
 void CryptOption::printUsage() {
-  std::cout << "\nDES Decryptor\n\n\
+  std::cout << "\nDES Decryptor\n\
 Usage:\n\
     crypt encrypt <plain text file> [-k key] [-i IV] [-o outFile] [-m mode]\n\
     crypt decrypt <cypher text file> [-k key] [-i IV] [-o outFile] [-m mode]\n\
@@ -179,7 +167,6 @@ Options:\n\
     -m mode       Mode of operation [ECB | CBC | PCBC | CFB | OFB]\n";
 }
 
-// TODO document toString
 std::string CryptOption::toString(CryptOption &opt) {
   std::ostringstream returnString;
   returnString << "\n\nIV: " << opt.iv << "\nKey: " << opt.key

@@ -99,7 +99,6 @@ void leftShift(unsigned inputArray[], int arrayLength, int shiftSize) {
 }
 
 
-// TODO, could this function not just return the bitset
 /*
  * Converts a string to binary.
  * Each charcter is converted to an array of bits, length 8.
@@ -220,7 +219,6 @@ void decimaltobinary(int integer, unsigned binarya[], int size) {
   }
 }
 
-//TODO could this function also not just return the keys
 /* 
  * Generates 16 48bit subkeys for DES from a 64 bit key.
  * The 64 bit key is first converted from characters to binary.
@@ -292,7 +290,6 @@ int parseCommandLineArguments(int argc, char *argv[], Options* encryptOpts,
       outputFileName = optarg;
       break;
     case 'i':
-      // TODO should you return if the IV is the wrong length???
       // Maybe the IV should just be padded, the problem is that it would
       // have to be padded in the same manner the next time as well
       if (strlen(optarg) != 8) {
@@ -357,14 +354,12 @@ int parseCommandLineArguments(int argc, char *argv[], Options* encryptOpts,
   }
 
   // Handle no Key set
-  // TODO generate a random key and display it to the user at the end
   if ((*encryptOpts).key.empty()) {
     std::cout << "[-] No key was chosen, using default (00000000)\n";
     (*encryptOpts).key = "00000000";
   }
 
   // Handle no IV set
-  // TODO generate a random IV and display it to the user at the end
   if ((*encryptOpts).iv.empty()) {
     std::cout << "[-] No IV was chosen, using default (00000000)\n";
     (*encryptOpts).iv = "00000000";

@@ -8,12 +8,11 @@ std::string& getFileContents(std::string inputFileName, std::string& outString);
 bool openOutFile(std::string fileName, std::ofstream* fileStream);
 
 int main(int argc, char *argv[]) {
-  std::cout << "Starting Crypt \n";
-
   //Parse command line options
   CryptOption opt = CryptOption();
   if (opt.parseCommandLineArguments(opt, argc, argv) < 0) {
     opt.printUsage();
+    return 0;
   };
 
   // DEBUG -- Print command line options
@@ -37,8 +36,4 @@ int main(int argc, char *argv[]) {
   params.parseInputFile(inFileString);
 
   std::cout << params.toString();
-  
-
 }
-
-
