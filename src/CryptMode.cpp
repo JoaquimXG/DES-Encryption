@@ -7,6 +7,6 @@ CryptMode::CryptMode(CryptParameters* params, CryptAlgorithm* cryptAlgo)
 
 std::string CryptMode::toString(CryptMode& modeHandler){
   std::stringstream returnString;
-  returnString << vectorToString(modeHandler.resultVect);
+  returnString << binaryVectorToString(modeHandler.resultVect);
   return returnString.str();
 }

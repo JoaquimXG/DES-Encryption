@@ -84,7 +84,7 @@ int charToBit(std::string inString, std::vector<std::vector<unsigned>>& outVecto
   return 0;
 }
 
-std::string vectorToString(std::vector<unsigned>& vect){
+std::string binaryVectorToString(std::vector<unsigned>& vect){
   std::stringstream returnString;
   for (auto i = vect.begin(); i != vect.end(); ++i){
       if (*i == 1){
@@ -96,7 +96,7 @@ std::string vectorToString(std::vector<unsigned>& vect){
   return returnString.str();
 };
 
-std::string vectorToString2D(std::vector<std::vector<unsigned>>& vect){
+std::string binaryVectorToString2D(std::vector<std::vector<unsigned>>& vect){
   std::stringstream returnString;
   for (auto i = vect.begin(); i != vect.end(); ++i) 
   {

@@ -32,7 +32,22 @@ bool leftShift(std::vector<unsigned>& inVector, int shiftSize, int startPosition
 int charToBit(std::string inString, std::vector<unsigned>& outVector);
 int charToBit(std::string inString, std::vector<std::vector<unsigned>>& outVector);
 
+/*
+ * Converts a vector containing binary values into a colour formatted string.
+ * Useful for troubleshooting functions which handle binary Vectors.
+ *
+ * @param A vector to be converted to a string.
+ * @return A colour formatted string containing each value in the Vector.
+ */
+std::string binaryVectorToString(std::vector<unsigned>& vect);
 
-//TODO document
-std::string vectorToString(std::vector<unsigned>& vect);
-std::string vectorToString2D(std::vector<std::vector<unsigned>>& vect);
+
+/*
+ * Converts a 2D vector containing binary values into a colour formatted string.
+ * Useful for troubleshooting functions which handle binary 2D Vectors.
+ *
+ * @param A 2D vector to be converted to a string.
+ * @return A colour formatted string containing each value in the 2D Vector.
+ */
+std::string binaryVectorToString2D(std::vector<std::vector<unsigned>>& vect);
+

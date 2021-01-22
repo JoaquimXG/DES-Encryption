@@ -71,13 +71,13 @@ int CryptParameters::parseInputFile(std::string inFileString) {
 std::string CryptParameters::toString() {
   std::stringstream returnString;
   returnString << "\nIV: \n";
-  returnString << vectorToString(this->ivVect);
+  returnString << binaryVectorToString(this->ivVect);
 
   returnString << "\n\nKey Vect: \n";
-  returnString << vectorToString2D(this->keyVect) << "\n";
+  returnString << binaryVectorToString2D(this->keyVect) << "\n";
 
   returnString << "\nPlain Text Vect: \n";
-  returnString << vectorToString(*this->plainTextVect) << "\n";
+  returnString << binaryVectorToString(*this->plainTextVect) << "\n";
   
   returnString << "\nPlain Text Length: " << this->plainTextLength
                << "\nNumber of Blocks: " << this->numberOfBlocks
