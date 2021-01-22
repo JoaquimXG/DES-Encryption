@@ -33,6 +33,35 @@ int charToBit(std::string inString, std::vector<unsigned>& outVector);
 int charToBit(std::string inString, std::vector<std::vector<unsigned>>& outVector);
 
 /*
+ * Performs an XOR on each value in 2 Vectors, storing the result in a third.
+ * The third array can be one of the 2 input Vector, in which case the result will overwrite the intial values.
+ *
+ * @param firstInput The first input Vector
+ * @param secondInput The second input Vector
+ * @param result A vector where the result will be stored, can be one of the 2 input Vectors.
+ * @param size The number of values in the Vectors to perform XOR on.
+ */
+void XOR(std::vector<unsigned>& firstInput, std::vector<unsigned>& secondInput, std::vector<unsigned>& result, int size);
+
+/*
+ * Converts a Vector containing a binary representaion of an integer into the integer.
+ * 
+ * @param input A Vector containing a binary representation of a decimal integer.
+ * @param size The length of the binary Vector.
+ * @return The decimal integer
+ */
+int binToDec(std::vector<unsigned>& input, int size);
+
+/*
+ * Converts a decimal integer into its binary representation.
+ * 
+ * @param integer An integer to be converted to binary.
+ * @param size The maximum number of binary digits required to represent the provided integer.
+ * @return A Vector containing the a binary representation of the provided integer.
+ */
+std::vector<unsigned> decToBin(int integer, int size);
+
+/*
  * Converts a vector containing binary values into a colour formatted string.
  * Useful for troubleshooting functions which handle binary Vectors.
  *
@@ -50,4 +79,3 @@ std::string binaryVectorToString(std::vector<unsigned>& vect);
  * @return A colour formatted string containing each value in the 2D Vector.
  */
 std::string binaryVectorToString2D(std::vector<std::vector<unsigned>>& vect);
-

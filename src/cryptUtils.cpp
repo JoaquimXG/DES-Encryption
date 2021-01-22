@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <math.h>
 
 
 //TODO define constants for things like height and width
@@ -58,7 +59,6 @@ bool leftShift(std::vector<unsigned>& inVector, int shiftSize, int startPosition
   return true;
 }
 
-// TODO, could this function not just return the bitset
 int charToBit(std::string inString, std::vector<unsigned>& outVector) {
   int stringLength = inString.size();
   for (int i = 0; i < stringLength; i++) {
@@ -71,7 +71,6 @@ int charToBit(std::string inString, std::vector<unsigned>& outVector) {
   return 0;
 }
 
-// TODO, could this function not just return the bitset
 // This is for 2D vectors, hopefully I won't need this
 int charToBit(std::string inString, std::vector<std::vector<unsigned>>& outVector) {
   int stringLength = inString.size();
@@ -82,6 +81,34 @@ int charToBit(std::string inString, std::vector<std::vector<unsigned>>& outVecto
     }
   }
   return 0;
+}
+
+//TODO, this will need an offset if it is ever to operate on the middle of an array
+void XOR(std::vector<unsigned>& firstInput, std::vector<unsigned>& secondInput, std::vector<unsigned>& result, int size) {
+  for (int i = 0; i < size; i++) {
+    if (firstInput[i] == secondInput[i]) {
+      result[i] = 0;
+    } else {
+      result[i] = 1;
+    }
+  }
+}
+
+int binToDec(std::vector<unsigned>& input, int size) {
+  int result = 0;
+  for (int i = size; i > 0; i--) {
+    result += input[i - 1] * pow(2, size - i);
+  }
+  return result;
+}
+
+std::vector<unsigned> decToBin(int integer, int size) {
+  std::vector<unsigned> output(size);
+  for (int i = size; i > 0; i--) {
+    output[i - 1] = integer % 2;
+    integer /= 2;
+  }
+  return output;
 }
 
 std::string binaryVectorToString(std::vector<unsigned>& vect){
