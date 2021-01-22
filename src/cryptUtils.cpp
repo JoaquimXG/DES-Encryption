@@ -4,10 +4,37 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <fstream>
 #include <math.h>
 
 
 //TODO define constants for things like height and width
+
+std::string getFileContents(std::string fileName){
+  std::ifstream fileStream;
+  std::string dumpString = "";
+
+  std::cout << "[+] Opening File: "<< fileName << "\n";
+  fileStream.open(fileName);
+  if (!fileStream.is_open()) {
+    std::cout << "\n[-] ------------ Can't open input file ------------\n";
+    return dumpString;
+  }
+
+  dumpString = std::string{std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>()};
+
+  return dumpString;
+}
+
+bool openOutFile(std::string fileName, std::ofstream* fileStream){
+  std::cout << "[+] Opening File: "<< fileName << "\n";
+  (*fileStream).open(fileName);
+  if (!(*fileStream).is_open()) {
+    std::cout << "\n[-] ------------ Can't open output file ------------";
+    return false;
+  }
+  return true;
+}
 
 void leftShift(std::vector<unsigned>& inVector, int shiftSize) {
   int vectorLength = inVector.size();

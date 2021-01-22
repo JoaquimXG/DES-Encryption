@@ -2,6 +2,24 @@
 #include <vector>
 
 /*
+ * Opens a file with a given name and reads the contents into a String.
+ *
+ * @param fileName The name of the file to be opened.
+ * @param dumpString The string variable where results will be placed.
+ * @return String The string variable where file contents are placed.
+ */
+std::string getFileContents(std::string fileName);
+
+/*
+ * Opens a file with a given name using a given ofstream
+ *
+ * @param fileStream An ofstream pointer which will be used to manage the output file.
+ * @param fileName The name of the file to open.
+ * @return bool True if file could be opened, else false.
+ */
+bool openOutFile(std::string fileName, std::ofstream* fileStream);
+
+/*
  * Arithmetic left shift, modified array in place.
  * Moves every element in an array to the left 'shiftSize' number of times.
  * Any element which would fall out of the array is moved to the end to

@@ -1,8 +1,8 @@
 #include "../include/CryptOption.h"
 #include "../include/CryptParameters.h"
 #include "../include/cryptUtils.h"
-#include <fstream>
 #include <iostream>
+#include <fstream>
 
 std::string& getFileContents(std::string inputFileName, std::string& outString);
 bool openOutFile(std::string fileName, std::ofstream* fileStream);
@@ -20,8 +20,7 @@ int main(int argc, char *argv[]) {
   //std::cout << opt.toString(opt);
 
   // Get input file contents
-  std::string inFileString;
-  inFileString = getFileContents(opt.inputFileName, inFileString);
+  std::string inFileString = getFileContents(opt.inputFileName);
   if (inFileString.compare("") == 0){
     return -2;
   }
@@ -38,33 +37,8 @@ int main(int argc, char *argv[]) {
   params.parseInputFile(inFileString);
 
   std::cout << params.toString();
+  
 
 }
 
 
-//TODO Move these functions to an appropriate file and add docstrings
-std::string& getFileContents(std::string fileName, std::string& dumpString){
-  std::ifstream fileStream;
-  dumpString = "";
-
-  std::cout << "[+] Opening File: "<< fileName << "\n";
-  fileStream.open(fileName);
-  if (!fileStream.is_open()) {
-    std::cout << "\n[-] ------------ Can't open input file ------------\n";
-    return dumpString;
-  }
-
-  dumpString = std::string{std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>()};
-
-  return dumpString;
-}
-
-bool openOutFile(std::string fileName, std::ofstream* fileStream){
-  std::cout << "[+] Opening File: "<< fileName << "\n";
-  (*fileStream).open(fileName);
-  if (!(*fileStream).is_open()) {
-    std::cout << "\n[-] ------------ Can't open output file ------------";
-    return false;
-  }
-  return true;
-}
