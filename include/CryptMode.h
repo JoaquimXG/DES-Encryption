@@ -7,6 +7,9 @@
 
 class CryptMode {
   public:
+
+  enum Mode { ECB, CBC, PCBC, CFB, OFB };
+
     CryptMode(CryptParameters* params, CryptAlgorithm* cryptAlgo);
     std::vector<unsigned> resultVect;
     CryptParameters* params;

@@ -1,11 +1,12 @@
 #include "../include/CryptOption.h"
+#include "../include/CryptMode.h"
 #include <getopt.h>
 #include <iostream>
 #include <sstream>
 #include <string.h>
 
 CryptOption::CryptOption()
-    : cryptMode(ECB), decrypt(false), cryptMethod(DES), cryptSize(8*BYTE_SIZE),
+    : cryptMode(CryptMode::ECB), decrypt(false), cryptMethod(DES), cryptSize(8*BYTE_SIZE),
       inputFileName(), outputFileName(){};
 
 int CryptOption::parseCommandLineArguments(CryptOption &opt, int argc,
@@ -86,7 +87,6 @@ bool CryptOption::parseNonOptionArguments(CryptOption &opt, int argc,
   return true;
 }
 
-// TODO generate a random key and IV and display them to the user at the end
 void CryptOption::parseKeyAndIvArguments(CryptOption &opt) {
   if (opt.key.empty()) {
     std::cout << "\n[-] No key was chosen, using default (00000000)";
@@ -133,17 +133,17 @@ bool CryptOption::checkEncryptionModeArgument(CryptOption &opt,
     std::cout << "\n[+] Utilising ECB Mode of operation";
   } else if (cryptModeArgument == "cbc" || cryptModeArgument == "CBC") {
     std::cout << "\n[+] Utilising CBC Mode of operation";
-    opt.cryptMode = CBC;
+    opt.cryptMode = CryptMode::CBC;
   } else if (cryptModeArgument == "pcbc" || cryptModeArgument == "PCBC") {
     std::cout << "\n[+] Utilising PCBC Mode of operation";
-    opt.cryptMode = PCBC;
+    opt.cryptMode = CryptMode::PCBC;
   } else if (cryptModeArgument == "cfb" || cryptModeArgument == "CFB") {
     std::cout << "\n[+] Utilising CFB Mode of operation";
-    opt.cryptMode = CFB;
+    opt.cryptMode = CryptMode::CFB;
     opt.cryptSize = 8;
   } else if (cryptModeArgument == "ofb" || cryptModeArgument == "OFB") {
     std::cout << "\n[+] Utilising OFB Mode of operation";
-    opt.cryptMode = OFB;
+    opt.cryptMode = CryptMode::OFB;
     opt.cryptSize = 8;
   } else {
     std::cout << "\n[-] No valid encryption mode selected";

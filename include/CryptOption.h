@@ -3,8 +3,6 @@
 #ifndef DESENCRYPTION_INCLUDE_OPTIONS_H_
 #define DESENCRYPTION_INCLUDE_OPTIONS_H_
 
-enum CryptMode { ECB, CBC, PCBC, CFB, OFB };
-
 enum CryptMethod { DES, AES };
 
 const int BYTE_SIZE = 8;
