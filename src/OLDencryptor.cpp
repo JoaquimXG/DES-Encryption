@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
   int encryption_block_num = (fileLength + padding) / 8;
   unsigned pta[encryption_block_num][64];
 
-  std::cout << "SHould be converting string here ----------------------------------------------";
+  std::cout << "Should be converting string here ----------------------------------------------";
   charToBit(inputFileString, &pta[0][0]);
 
   if (padding > 0) {

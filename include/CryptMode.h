@@ -15,11 +15,21 @@ class CryptMode {
     CryptParameters* params;
     CryptAlgorithm* cryptAlgo;
 
-    std::string toString(CryptMode& modeHandler);
+    std::string toString();
 
     virtual void encrypt() = 0;
 
     virtual void decrypt() = 0;
+
+    /*
+     * Converts the currently stored resultsVect from binary to decimal ready for printing in hex.
+     *
+     * Loops through the resultsVect converting each 8 bit section into a decimal integer.
+     * Each integer is added to a new vector and the vector is returned once all sections have been converted.
+     *
+     * @return std::vector<unsigned> A vector containing the resultsVect represented in decimal.
+     */
+    std::vector<unsigned> resultToDecimal();
 };
 
 class EcbMode: public CryptMode {

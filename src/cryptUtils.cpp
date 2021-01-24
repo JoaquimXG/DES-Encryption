@@ -1,5 +1,6 @@
 #include <bitset>
 #include "../include/cryptUtils.h"
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -129,6 +130,14 @@ int binToDec(std::vector<unsigned>& input, int size) {
   return result;
 }
 
+int binToDec(std::vector<unsigned>::iterator start, int size) {
+  int result = 0;
+  for (int i = size; i > 0; i--) {
+    result += *(start+i-1) * pow(2, size - i);
+  }
+  return result;
+}
+
 std::vector<unsigned> decToBin(int integer, int size) {
   std::vector<unsigned> output(size);
   for (int i = size; i > 0; i--) {
@@ -146,6 +155,14 @@ std::string binaryVectorToString(std::vector<unsigned>& vect){
       } else {
         returnString << "\033[31m" << *i << "\033[0m" << "";
       }
+  }
+  return returnString.str();
+};
+
+std::string hexVectorToString(std::vector<unsigned>& vect){
+  std::stringstream returnString;
+  for (auto i = vect.begin(); i != vect.end(); ++i){
+      returnString << std::hex << std::setfill('0') << std::setw(2) << *i;
   }
   return returnString.str();
 };

@@ -1,6 +1,8 @@
 #include "../include/CryptOption.h"
 #include "../include/CryptParameters.h"
 #include "../include/cryptUtils.h"
+#include "../include/DesAlgorithm.h"
+#include "../include/CryptMode.h"
 #include <iostream>
 #include <fstream>
 
@@ -36,4 +38,13 @@ int main(int argc, char *argv[]) {
   params.parseInputFile(inFileString);
 
   std::cout << params.toString();
+
+  DesAlgorithm cryptAlgo = DesAlgorithm();
+  EcbMode cryptMode = EcbMode(&params, &cryptAlgo);
+  cryptMode.encrypt();
+  std::cout << cryptMode.toString();
+
+  std::vector<unsigned> decimalOutput = cryptMode.resultToDecimal();
+
+  outFileStream << hexVectorToString(decimalOutput);
 }

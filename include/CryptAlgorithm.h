@@ -4,8 +4,8 @@
 
 class CryptAlgorithm {
   public:
-    virtual std::vector<unsigned> encrypt() = 0;
+    virtual std::vector<unsigned> encrypt(std::vector<std::vector<unsigned>>& keyGroup, std::vector<unsigned>::const_iterator plaintextIterator) = 0;
 
-    virtual std::vector<unsigned> decrypt() = 0;
+    virtual std::vector<unsigned> decrypt(std::vector<std::vector<unsigned>>& keyGroup, std::vector<unsigned>::const_iterator plaintextIterator) = 0;
 };
 #endif

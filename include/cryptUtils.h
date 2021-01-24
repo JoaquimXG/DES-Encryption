@@ -71,6 +71,15 @@ void XOR(std::vector<unsigned>& firstInput, std::vector<unsigned>& secondInput, 
 int binToDec(std::vector<unsigned>& input, int size);
 
 /*
+ * Converts a section of a Vector containing a binary representaion of an integer into the integer.
+ * 
+ * @param start An iterator pointing to the start of the section of Vector.
+ * @param size The number of bits to be converted to decimal.
+ * @return The decimal integer
+ */
+int binToDec(std::vector<unsigned>::iterator start, int size);
+
+/*
  * Converts a decimal integer into its binary representation.
  * 
  * @param integer An integer to be converted to binary.
@@ -87,6 +96,14 @@ std::vector<unsigned> decToBin(int integer, int size);
  * @return A colour formatted string containing each value in the Vector.
  */
 std::string binaryVectorToString(std::vector<unsigned>& vect);
+
+/*
+ * Converts a vector containing decimal representations of hex values into a string of hex digits.
+ *
+ * @param A vector to be converted to a string.
+ * @return A hex string.
+ */
+std::string hexVectorToString(std::vector<unsigned>& vect);
 
 
 /*

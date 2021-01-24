@@ -1,12 +1,27 @@
 #include "../include/CryptMode.h"
 #include "../include/cryptUtils.h"
 #include <sstream>
+#include <iostream>
 
 CryptMode::CryptMode(CryptParameters* params, CryptAlgorithm* cryptAlgo)
-    : resultVect(params-> numberOfBlocks * 64, 0), params(params), cryptAlgo(cryptAlgo){};
+    : resultVect(), params(params), cryptAlgo(cryptAlgo){};
 
-std::string CryptMode::toString(CryptMode& modeHandler){
+
+std::vector<unsigned> CryptMode::resultToDecimal(){
+  std::vector<unsigned> output;
+
+  std::vector<unsigned>::iterator it = this->resultVect.begin();
+  for (int i = 0; i < this->resultVect.size()/8; i++) {
+    unsigned decimalDigit = binToDec(it, 8);
+    output.push_back(decimalDigit);
+    it = it + 8;
+  }
+
+  return output;
+}
+
+std::string CryptMode::toString(){
   std::stringstream returnString;
-  returnString << binaryVectorToString(modeHandler.resultVect);
+  returnString << binaryVectorToString(resultVect)<< "\n";
   return returnString.str();
 }
