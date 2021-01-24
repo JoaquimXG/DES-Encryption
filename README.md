@@ -39,3 +39,4 @@ Running `make clean` will remove all object files, binaries and test files.
 
 Moving all functionality into class structure to improve readability and extensibility.
 
+- Automatically generate a random key and IV if one is not provided, for encryption only. The generated key and IV should be displayed to the user after encryption.

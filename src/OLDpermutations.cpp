@@ -8,7 +8,7 @@
  * Each value represents the bit position that is selected from the 64 bit key and the index
  * will be its new position in the 56 bit key.
  */
-int keyPermutedChoice1[56] = {
+int keyPermutedChoice1Table[56] = {
                      56, 48, 40, 32, 24, 16, 8,  0,  57, 49, 41, 33, 25, 17,
                      9,  1,  58, 50, 42, 34, 26, 18, 10, 2,  59, 51, 43, 35,
                      62, 54, 46, 38, 30, 22, 14, 6,  61, 53, 45, 37, 29, 21,
@@ -26,7 +26,7 @@ int keyBitRotationTable[16] = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
  * Each value represents the bit position that is selected from the 56 bit key and the index
  * will be its new position in the 48 bit key.
  */
-int keyPermutedChoice2[48] = {
+int keyPermutedChoice2Table[48] = {
                      13, 16, 10, 23, 0,  4,  2,  27, 14, 5,  20, 9,
                      22, 18, 11, 3,  25, 7,  15, 6,  26, 19, 12, 1,
                      40, 51, 30, 36, 46, 54, 29, 39, 50, 44, 32, 47,

@@ -18,16 +18,15 @@ void CryptParameters::generateSubKeys(std::string &key) {
   std::vector<unsigned> temporary64BitKey(64);
   charToBit(key, temporary64BitKey);
   for (int i = 0; i < 56; i++) {
-    keyPermutedChoice1[i] = temporary64BitKey[keyPermutedChoice1[i]];
+    keyPermutedChoice1[i] = temporary64BitKey[keyPermutedChoice1Table[i]];
   }
-
 
   for (int i = 0; i < 16; i++) {
     leftShift(keyPermutedChoice1, keyBitRotationTable[i], 28, 55);
     leftShift(keyPermutedChoice1, keyBitRotationTable[i], 0, 27);
 
     for (int j = 0; j < 48; j++) {
-      this->keyVect[i][j] = keyPermutedChoice1[keyPermutedChoice2[j]];
+      this->keyVect[i][j] = keyPermutedChoice1[keyPermutedChoice2Table[j]];
     }
   }
 }

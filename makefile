@@ -66,7 +66,7 @@ all:
 # Rule to tidy any output
 .PHONY: clean
 clean:
-	rm -f $(ODIR)/*.o *~ core $(IDIR)/*~ OLDencryptor OLDdecryptor crypt play
+	rm -f $(ODIR)/*.o *~ core $(IDIR)/*~ OLDencryptor OLDdecryptor crypt play encrypted.txt decrypted.txt
 	rm -rf test
 
 # Rule for compiling both OLD binaries, encryptor and decryptor
@@ -81,7 +81,7 @@ OLDencryptor: $(OBJ) $(ENCRYPT_OBJ)
 
 # Rule for decryptor on its own
 OLDdecryptor: $(OBJ) $(DECRYPT_OBJ)
-	$(CC) -o OLDencryptor $(OBJ) $(ENCRYPT_OBJ) $(CFLAGS)
+	$(CC) -o OLDdecryptor $(OBJ) $(DECRYPT_OBJ) $(CFLAGS)
 
 # Rule to perform the most basic tests
 .PHONY: OLDtest

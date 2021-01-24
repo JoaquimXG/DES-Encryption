@@ -240,7 +240,7 @@ void generateSubKeys(std::string &key, unsigned (*keya)[16][48] ) {
   charToBit(key, keya64bit);
 
   for (int i = 0; i < 56; i++) {
-    keyPC1[0][i] = keya64bit[keyPermutedChoice1[i]];
+    keyPC1[0][i] = keya64bit[keyPermutedChoice1Table[i]];
   }
 
   for (int i = 0; i < 16; i++) {
@@ -248,7 +248,7 @@ void generateSubKeys(std::string &key, unsigned (*keya)[16][48] ) {
     leftShift(&keyPC1[1][0], 28, keyBitRotationTable[i]);
 
     for (int j = 0; j < 48; j++) {
-      (*keya)[i][j] = keyPC1[0][keyPermutedChoice2[j]];
+      (*keya)[i][j] = keyPC1[0][keyPermutedChoice2Table[j]];
     }
   }
 }
