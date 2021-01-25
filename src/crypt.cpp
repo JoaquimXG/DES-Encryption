@@ -3,6 +3,7 @@
 #include "../include/cryptUtils.h"
 #include "../include/DesAlgorithm.h"
 #include "../include/CryptMode.h"
+#include "../include/Debugger.h"
 #include <iostream>
 #include <fstream>
 
@@ -12,13 +13,14 @@ bool openOutFile(std::string fileName, std::ofstream* fileStream);
 int main(int argc, char *argv[]) {
   //Parse command line options
   CryptOption opt = CryptOption();
-  if (opt.parseCommandLineArguments(opt, argc, argv) < 0) {
+  if (opt.parseCommandLineArguments(argc, argv) < 0) {
     opt.printUsage();
     return 0;
   };
 
-  // DEBUG -- Print command line options
-  //std::cout << opt.toString(opt);
+  Debugger debug = Debugger(opt);
+
+  debug.print(opt.toString());
 
   // Get input file contents
   std::string inFileString = getFileContents(opt.inputFileName);
@@ -37,7 +39,7 @@ int main(int argc, char *argv[]) {
   params.parseInputFile(inFileString);
   charToBit(opt.iv, params.ivVect);
 
-  std::cout << params.toString();
+  debug.print(params.toString());
 
   DesAlgorithm cryptAlgo = DesAlgorithm();
   CryptMode* cryptMode;
@@ -45,10 +47,10 @@ int main(int argc, char *argv[]) {
       default:
           cryptMode = new EcbMode(&params, &cryptAlgo);
   }
+
   cryptMode->encrypt();
-  std::cout << cryptMode->toString();
+  debug.print(cryptMode->toString());
 
   std::vector<unsigned> decimalOutput = cryptMode->resultToDecimal();
-
   outFileStream << hexVectorToString(decimalOutput);
 }

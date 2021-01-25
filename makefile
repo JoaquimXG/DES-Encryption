@@ -14,7 +14,7 @@ CFLAGS=-I$(IDIR)
 ODIR=src/obj
 
 # Converting header file names to include IDIR
-_DEPS = OLDpermutations.h OLDfunctions.h OLDOptions.h CryptParameters.h CryptOption.h CryptMode.h CryptAlgorithm.h DesAlgorithm.h cryptUtils.h 
+_DEPS = OLDpermutations.h OLDfunctions.h OLDOptions.h CryptParameters.h CryptOption.h CryptMode.h CryptAlgorithm.h DesAlgorithm.h Debugger.h cryptUtils.h 
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 # Converting object file names to include ODIR

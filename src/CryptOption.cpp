@@ -6,33 +6,35 @@
 #include <string.h>
 
 CryptOption::CryptOption()
-    : cryptMode(CryptMode::ECB), decrypt(false), cryptMethod(DES), cryptSize(8*BYTE_SIZE),
+    : cryptMode(CryptMode::ECB), toDecrypt(false), cryptMethod(DES), cryptSize(8*BYTE_SIZE),
       inputFileName(), outputFileName(){};
 
-int CryptOption::parseCommandLineArguments(CryptOption &opt, int argc,
-                                           char *argv[]) {
+int CryptOption::parseCommandLineArguments(int argc, char *argv[]) {
   std::string cryptModeArgument;
 
   int option;
-  while ((option = getopt(argc, argv, "m:o:i:k:h")) != -1) {
+  while ((option = getopt(argc, argv, "m:o:i:k:hd")) != -1) {
     switch (option) {
     case 'm':
       cryptModeArgument = std::string(optarg);
       break;
     case 'o':
-      opt.outputFileName = optarg;
+      this->outputFileName = optarg;
       break;
     case 'i':
       if (strlen(optarg) != 8) {
         return -1;
       };
-      opt.iv = optarg;
+      this->iv = optarg;
       break;
     case 'k':
       if (strlen(optarg) != 8) {
         return -1;
       };
-      opt.key = optarg;
+      this->key = optarg;
+      break;
+    case 'd':
+      this->debug = true;
       break;
     case 'h':
       return -1;
@@ -45,31 +47,30 @@ int CryptOption::parseCommandLineArguments(CryptOption &opt, int argc,
     }
   }
 
-  if (!parseNonOptionArguments(opt, argc, argv))
+  if (!parseNonOptionArguments(argc, argv))
     return -1;
 
-  parseKeyAndIvArguments(opt);
+  parseKeyAndIvArguments();
 
-  if (!checkEncryptionModeArgument(opt, cryptModeArgument))
+  if (!checkEncryptionModeArgument(cryptModeArgument))
     return -1;
 
-  if (!checkFileArguments(opt))
+  if (!checkFileArguments())
     return -2;
 
   return 0;
 }
 
-bool CryptOption::parseNonOptionArguments(CryptOption &opt, int argc,
-                                         char *argv[]) {
+bool CryptOption::parseNonOptionArguments(int argc, char *argv[]) {
   int nonOptionArgumentIndex = 0;
   int argumentIndex;
   for (argumentIndex = optind; argumentIndex < argc; argumentIndex++) {
     std::string nonOptionArgument = std::string(argv[argumentIndex]);
     if (nonOptionArgumentIndex == 0) {
       if (nonOptionArgument == "encrypt") {
-        opt.decrypt = false;
+        this->toDecrypt = false;
       } else if (nonOptionArgument == "decrypt") {
-        opt.decrypt = true;
+        this->toDecrypt = true;
       } else {
         std::cout << "\n[-] Please choose to either encrypt or decrypt";
         return false;
@@ -78,7 +79,7 @@ bool CryptOption::parseNonOptionArguments(CryptOption &opt, int argc,
     }
 
     else if (nonOptionArgumentIndex == 1) {
-      opt.inputFileName = nonOptionArgument;
+      this->inputFileName = nonOptionArgument;
       nonOptionArgumentIndex++;
     } else {
       return false;
@@ -87,22 +88,22 @@ bool CryptOption::parseNonOptionArguments(CryptOption &opt, int argc,
   return true;
 }
 
-void CryptOption::parseKeyAndIvArguments(CryptOption &opt) {
-  if (opt.key.empty()) {
+void CryptOption::parseKeyAndIvArguments() {
+  if (this->key.empty()) {
     std::cout << "\n[-] No key was chosen, using default (00000000)";
-    opt.key = "00000000";
+    this->key = "00000000";
   }
 
-  if (opt.iv.empty()) {
+  if (this->iv.empty()) {
     std::cout << "\n[-] No IV was chosen, using default (00000000)";
-    opt.iv = "00000000";
+    this->iv = "00000000";
   }
 }
 
-bool CryptOption::checkFileArguments(CryptOption &opt) {
+bool CryptOption::checkFileArguments() {
   // Handle input file not being set
-  if (opt.inputFileName.empty()) {
-    if (opt.decrypt) {
+  if (this->inputFileName.empty()) {
+    if (this->toDecrypt) {
       std::cout << "\n[-] Please provide a file to decrypt";
     } else {
       std::cout << "\n[-] Please provide a file to encrypt";
@@ -111,21 +112,20 @@ bool CryptOption::checkFileArguments(CryptOption &opt) {
   }
 
   // Handle output file not being set
-  if (opt.outputFileName.empty()) {
-    if (decrypt) {
+  if (this->outputFileName.empty()) {
+    if (this->toDecrypt) {
       std::cout << "\n[+] No output file chosen, using default (decrypted.txt)";
-      opt.outputFileName = "decrypted.txt";
+      this->outputFileName = "decrypted.txt";
     } else {
       std::cout << "\n[+] No output file chosen, using default (encrypted.txt)";
-      opt.outputFileName = "encrypted.txt";
+      this->outputFileName = "encrypted.txt";
     }
   }
 
   return true;
 }
 
-bool CryptOption::checkEncryptionModeArgument(CryptOption &opt,
-                                             std::string cryptModeArgument) {
+bool CryptOption::checkEncryptionModeArgument(std::string cryptModeArgument) {
   if (cryptModeArgument.empty()) {
     std::cout
         << "\n[+] No mode of operation was chosen, using default (ECB Mode)";
@@ -133,18 +133,18 @@ bool CryptOption::checkEncryptionModeArgument(CryptOption &opt,
     std::cout << "\n[+] Utilising ECB Mode of operation";
   } else if (cryptModeArgument == "cbc" || cryptModeArgument == "CBC") {
     std::cout << "\n[+] Utilising CBC Mode of operation";
-    opt.cryptMode = CryptMode::CBC;
+    this->cryptMode = CryptMode::CBC;
   } else if (cryptModeArgument == "pcbc" || cryptModeArgument == "PCBC") {
     std::cout << "\n[+] Utilising PCBC Mode of operation";
-    opt.cryptMode = CryptMode::PCBC;
+    this->cryptMode = CryptMode::PCBC;
   } else if (cryptModeArgument == "cfb" || cryptModeArgument == "CFB") {
     std::cout << "\n[+] Utilising CFB Mode of operation";
-    opt.cryptMode = CryptMode::CFB;
-    opt.cryptSize = 8;
+    this->cryptMode = CryptMode::CFB;
+    this->cryptSize = 8;
   } else if (cryptModeArgument == "ofb" || cryptModeArgument == "OFB") {
     std::cout << "\n[+] Utilising OFB Mode of operation";
-    opt.cryptMode = CryptMode::OFB;
-    opt.cryptSize = 8;
+    this->cryptMode = CryptMode::OFB;
+    this->cryptSize = 8;
   } else {
     std::cout << "\n[-] No valid encryption mode selected";
     return false;
@@ -167,12 +167,12 @@ Options:\n\
     -m mode       Mode of operation [ECB | CBC | PCBC | CFB | OFB]\n";
 }
 
-std::string CryptOption::toString(CryptOption &opt) {
+std::string CryptOption::toString() {
   std::ostringstream returnString;
-  returnString << "\n\nIV: " << opt.iv << "\nKey: " << opt.key
-               << "\nInput File: " << opt.inputFileName
-               << "\nOutput File: " << opt.outputFileName
-               << "\nCrypt Size: " << opt.cryptSize
-               << "\nCrypt Mode: " << opt.cryptMode << "\n\n";
+  returnString << "\n\nIV: " << this->iv << "\nKey: " << this->key
+               << "\nInput File: " << this->inputFileName
+               << "\nOutput File: " << this->outputFileName
+               << "\nCrypt Size: " << this->cryptSize
+               << "\nCrypt Mode: " << this->cryptMode << "\n\n";
   return returnString.str();
 }

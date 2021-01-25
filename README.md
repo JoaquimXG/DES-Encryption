@@ -18,6 +18,7 @@ Usage:
 
 Options:
     -h --help     Show this screen.
+    -d            Run with debugging information
     -i IV         Initialisation vector for encryption
     -k key        Encryption key
     -o outFile    Output file
