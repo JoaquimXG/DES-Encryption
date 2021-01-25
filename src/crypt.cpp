@@ -12,44 +12,54 @@ bool openOutFile(std::string fileName, std::ofstream* fileStream);
 
 int main(int argc, char *argv[]) {
   //Parse command line options
-  CryptOption opt = CryptOption();
-  if (opt.parseCommandLineArguments(argc, argv) < 0) {
-    opt.printUsage();
+  CryptOption option = CryptOption();
+  if (option.parseCommandLineArguments(argc, argv) < 0) {
+    option.printUsage();
     return 0;
   };
 
-  Debugger debug = Debugger(opt);
-  debug.print(opt.toString());
+  Debugger debug = Debugger(option);
+  debug.print(option.toString());
 
   // Get input file contents
-  std::string inFileString = getFileContents(opt.inputFileName);
+  std::string inFileString = getFileContents(option.inputFileName);
   if (inFileString.compare("") == 0){
     return -2;
   }
 
   // Test opening output file
   std::ofstream outFileStream;
-  if (!openOutFile(opt.outputFileName, &outFileStream))
+  if (!openOutFile(option.outputFileName, &outFileStream))
     return -2;
 
   // Prepares encryption parameters
-  CryptParameters params = CryptParameters(inFileString.size());
-  params.generateSubKeys(opt.key);
+  CryptParameters params = CryptParameters(inFileString.size(), option.toDecrypt);
+  params.generateSubKeys(option.key);
   params.parseInputFile(inFileString);
-  charToBit(opt.iv, params.ivVect);
+  charToBin(option.iv, params.ivVect);
 
   debug.print(params.toString());
 
   //Choose mode of encryption
   CryptMode* cryptMode;
-  switch(opt.cryptMode){
+  switch(option.cryptMode){
       default:
-          cryptMode = new EcbMode(&params, &opt);
+          cryptMode = new EcbMode(&params, &option);
   }
 
-  cryptMode->encrypt();
+  std::vector<unsigned> output;
+  if (option.toDecrypt){
+      cryptMode->decrypt();
+      output = cryptMode->resultToDecimal();
+      outFileStream << decVectorToCharString(output);
+  }
+  else {
+      cryptMode->encrypt();
+      output = cryptMode->resultToDecimal();
+      outFileStream << decVectorToHexString(output);
+  }
+
   debug.print(cryptMode->toString());
 
-  std::vector<unsigned> decimalOutput = cryptMode->resultToDecimal();
-  outFileStream << hexVectorToString(decimalOutput);
+  return 0;
 }

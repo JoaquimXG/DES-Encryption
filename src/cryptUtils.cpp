@@ -1,5 +1,4 @@
 #include <bitset>
-#include "../include/cryptUtils.h"
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -7,6 +6,8 @@
 #include <vector>
 #include <fstream>
 #include <math.h>
+#include "../include/cryptUtils.h"
+#include "../include/OLDpermutations.h"
 
 
 //TODO define constants for things like height and width
@@ -87,7 +88,7 @@ bool leftShift(std::vector<unsigned>& inVector, int shiftSize, int startPosition
   return true;
 }
 
-int charToBit(std::string inString, std::vector<unsigned>& outVector) {
+void charToBin(std::string inString, std::vector<unsigned>& outVector) {
   int stringLength = inString.size();
   for (int i = 0; i < stringLength; i++) {
 
@@ -96,11 +97,11 @@ int charToBit(std::string inString, std::vector<unsigned>& outVector) {
       outVector[(i*8)+j] = tempBitset[8-1-j];
     }
   }
-  return 0;
+  return;
 }
 
 // This is for 2D vectors, hopefully I won't need this
-int charToBit(std::string inString, std::vector<std::vector<unsigned>>& outVector) {
+void charToBin(std::string inString, std::vector<std::vector<unsigned>>& outVector) {
   int stringLength = inString.size();
   for (int i = 0; i < stringLength; i++) {
     std::bitset<8> tempBitset(inString.c_str()[i]);
@@ -108,7 +109,19 @@ int charToBit(std::string inString, std::vector<std::vector<unsigned>>& outVecto
       outVector[i/8][((i*8)+k)%64] = tempBitset[k];
     }
   }
-  return 0;
+  return;
+}
+
+void hexToBin(std::string inString, std::vector<unsigned>& outVector){
+  int stringLength = inString.size();
+  std::vector<unsigned>::iterator outVectorIt = outVector.begin();
+  for (int i = 0; i < stringLength; i++) {
+    auto iterator = hexLookupTable.find(inString[i]);
+    for (int k = 0; k < 4; k++) {
+      *outVectorIt = iterator->second[k];
+      outVectorIt++;
+    }
+  }
 }
 
 //TODO, this will need an offset if it is ever to operate on the middle of an array
@@ -159,10 +172,18 @@ std::string binaryVectorToString(std::vector<unsigned>& vect){
   return returnString.str();
 };
 
-std::string hexVectorToString(std::vector<unsigned>& vect){
+std::string decVectorToHexString(std::vector<unsigned>& vect){
   std::stringstream returnString;
   for (auto i = vect.begin(); i != vect.end(); ++i){
       returnString << std::hex << std::setfill('0') << std::setw(2) << *i;
+  }
+  return returnString.str();
+};
+
+std::string decVectorToCharString(std::vector<unsigned>& vect){
+  std::stringstream returnString;
+  for (auto i = vect.begin(); i != vect.end(); ++i){
+      returnString << (char)*i;
   }
   return returnString.str();
 };

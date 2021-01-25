@@ -50,15 +50,15 @@ test:
 	rm -rf test/
 	mkdir -p test 
 	ls -l >> test/input.txt
-	./OLDencryptor test/input.txt -o test/OLDencrypted.hex
+	#OLDencryptor test/input.txt -o test/OLDencrypted.hex
 	./crypt encrypt test/input.txt -o test/encrypted.hex
-	#./crypt decrypt test/OLDencrypted.hex -o test/decrypted.txt
-	./OLDdecryptor test/encrypted.hex -o test/OLDdecrypted.txt
+	./crypt decrypt test/encrypted.hex -o test/decrypted.txt
+	#OLDdecryptor test/encrypted.hex -o test/OLDdecrypted.txt
 	@echo 
 	@echo "Running diff on input and decrypted files -------------------------"
 	@echo 
-	#cat test/decrypted.txt
-	cat test/OLDdecrypted.txt
+	#cat test/OLDdecrypted.txt
+	cat test/decrypted.txt
 
 .PHONY: all
 all: 

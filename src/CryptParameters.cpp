@@ -7,16 +7,16 @@
 
 // TODO Declare constants for the dimensions of the arrays that are inuse
 
-CryptParameters::CryptParameters(int inputTextLength)
+CryptParameters::CryptParameters(int inputTextLength, bool toDecrypt)
     : numberOfBlocks(0), padding(0), inputTextLength(inputTextLength),
-      inputTextVect(nullptr),
+      toDecrypt(toDecrypt), inputTextVect(nullptr),
       keyVect(16, std::vector<unsigned>(48, 0)), ivVect(64, 0){}; 
 
 void CryptParameters::generateSubKeys(std::string &key) {
   std::vector<unsigned> keyPermutedChoice1(56, 0);
 
   std::vector<unsigned> temporary64BitKey(64);
-  charToBit(key, temporary64BitKey);
+  charToBin(key, temporary64BitKey);
   for (int i = 0; i < 56; i++) {
     keyPermutedChoice1[i] = temporary64BitKey[keyPermutedChoice1Table[i]];
   }
@@ -31,8 +31,24 @@ void CryptParameters::generateSubKeys(std::string &key) {
   }
 }
 
-
 void CryptParameters::parseInputFile(std::string inFileString) {
+  if (toDecrypt){
+    parseHexInputFile(inFileString);
+  }
+  else {
+    parseCharInputFile(inFileString);
+  }
+}
+
+void CryptParameters::parseHexInputFile(std::string inFileString){
+  this->inputTextLength = inFileString.size();
+  this->numberOfBlocks = (this->inputTextLength/2) / 8;
+  this->inputTextVect = new std::vector<unsigned>(numberOfBlocks * 64, 0);
+  
+  hexToBin(inFileString, *this->inputTextVect);
+}
+
+void CryptParameters::parseCharInputFile(std::string inFileString){
   // calculate the length of the last chunk of data to be encrypted and the
   // difference from 8 bytes
   this->inputTextLength = inFileString.size();
@@ -42,14 +58,14 @@ void CryptParameters::parseInputFile(std::string inFileString) {
   this->numberOfBlocks = (this->inputTextLength + this->padding) / 8;
   this->inputTextVect = new std::vector<unsigned>(numberOfBlocks * 64, 0);
   
-  charToBit(inFileString, *this->inputTextVect);
+  charToBin(inFileString, *this->inputTextVect);
 
   if (this->padding > 0) {
-    // pointer to the last position in array
     for (int i = 0; i < this->padding * 8; i++) {
       inputTextVect[(this->numberOfBlocks) - 1][64 - 1 - i];
     }
   }
+
 }
 
 std::string CryptParameters::toString() {

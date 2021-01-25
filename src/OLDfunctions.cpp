@@ -258,7 +258,7 @@ void hextobit(std::string file_contents, unsigned *array) {
   // loops through key characters and turns them into 4 bit representaion, adds
   // that to array
   for (int i = 0; i < size; i++) {
-    auto iterator = hexconvert.find(*(fileit + i));
+    auto iterator = hexLookupTable.find(*(fileit + i));
     for (int k = 0; k < 4; k++) {
       *array = iterator->second[k];
       array++;

@@ -3,8 +3,15 @@
 #include <vector>
 #include "./CryptParameters.h"
 #include "./CryptAlgorithm.h"
+#include "./DesAlgorithm.h"
 #include "./CryptOption.h"
 
+/*
+ * Parent class for all Encryption mode classes.
+ *
+ * Presents methods used to allow for encryption and decryption to be performed
+ * by any suitable implementaion algorithm.
+ */
 class CryptMode {
   public:
 
@@ -38,13 +45,49 @@ class CryptMode {
     std::string toString();
 };
 
+/*
+ * ECB Mode of encryption
+ *
+ * Both encryption and decryption, ECB mode simply loops through each 64 bit section of input
+ * and performs the selected encryption algorithms encrypt or decrypt function accordingly.
+ *
+ * No preprocessing or post processing is required.
+ *
+ */
 class EcbMode: public CryptMode {
   public:
     EcbMode(CryptParameters* params, CryptOption* opt);
 
+    /*
+     * Encrypts the entire input
+     *
+     * Runs ecbStructure, pasing in the selected encryption algorithms encrypt function.
+     */
     void encrypt() override;
 
+    /*
+     * Decrypts the entire input
+     *
+     * Runs ecbStructure, pasing in the selected encryption algorithms decrypt function.
+     */
     void decrypt() override;
+
+    /*
+     * Loops through each block of input and runs either an encryption or decrypt function on the block.
+     *
+     * The encryption or decryption function is passed as a parameter through EcbMode::encrypt or EcbMode::decrypt.
+     *
+     * The syntax can be broken down as 
+     * std::vector<unsigned> - The return value of the passed function
+     * CryptAlgorithm::*crypt - A pointer to a member function of the CryptAlgorithm class. 
+     * (std::vector<std::vector<unsigned>>& keyGroup, std::vector<unsigned>::const_iterator plaintextIterator) - The arguments required for the passed function.
+     *
+     * The function that is passed must be a class member function of the CryptAlgorithm class or its descendants and must have the same signature as is defined here.
+     *
+     * @param An encryption or decryption class member function from the CryptAlgorithm class family.
+     *
+     */
+    void ecbStructure(std::vector<unsigned> (CryptAlgorithm::*crypt)(std::vector<std::vector<unsigned>>& keyGroup, std::vector<unsigned>::const_iterator plaintextIterator));
 };
 
 #endif

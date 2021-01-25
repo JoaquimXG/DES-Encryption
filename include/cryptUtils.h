@@ -45,10 +45,21 @@ bool leftShift(std::vector<unsigned>& inVector, int shiftSize, int startPosition
  *
  * @param inString The string to be converted to binary.
  * @param outVector A vector to store the results
- * @return 0
  */
-int charToBit(std::string inString, std::vector<unsigned>& outVector);
-int charToBit(std::string inString, std::vector<std::vector<unsigned>>& outVector);
+void charToBin(std::string inString, std::vector<unsigned>& outVector);
+void charToBin(std::string inString, std::vector<std::vector<unsigned>>& outVector);
+
+/*
+ * Converts a hex string to binary using a lookup table.
+ *
+ * Each character is searched for within map<char, array<int, 4>>
+ * The corresponding array contains the binary representation of the char.
+ * The values in the array are looped over and written into the outvector.
+ *
+ * @param inString The string to be converted to binary.
+ * @param outVector A vector to store the results
+ */
+void hexToBin(std::string inString, std::vector<unsigned>& outVector);
 
 /*
  * Performs an XOR on each value in 2 Vectors, storing the result in a third.
@@ -103,7 +114,15 @@ std::string binaryVectorToString(std::vector<unsigned>& vect);
  * @param A vector to be converted to a string.
  * @return A hex string.
  */
-std::string hexVectorToString(std::vector<unsigned>& vect);
+std::string decVectorToHexString(std::vector<unsigned>& vect);
+
+/*
+ * Converts a vector containing decimal representations of char values into a string of chars.
+ *
+ * @param A vector to be converted to a string.
+ * @return A char string.
+ */
+std::string decVectorToCharString(std::vector<unsigned>& vect);
 
 
 /*

@@ -6,7 +6,6 @@
 CryptMode::CryptMode(CryptParameters* params, CryptOption* opt)
     : resultVect(), params(params){};
 
-
 std::vector<unsigned> CryptMode::resultToDecimal(){
   std::vector<unsigned> output;
 

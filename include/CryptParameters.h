@@ -13,11 +13,12 @@ class CryptParameters {
     int inputTextLength;
     int numberOfBlocks;
     int padding;
+    bool toDecrypt;
 
     /* Constructor 
      * @param inputTextLength The length of the plaintext
      */
-    CryptParameters(int inputTextLength);
+    CryptParameters(int inputTextLength, bool toDecrypt);
 
     /* 
      * Generates 16 48bit subkeys for DES from a 64 bit key.
@@ -36,17 +37,41 @@ class CryptParameters {
     void generateSubKeys(std::string &key);
 
     /*
-     * Converts the input string into a binary representation.
+     * Selects the appropriate file parsing file based on whether the input file is being encrypted or decrypted.
      *
-     * First calculates the amount of padding required.
-     * Then the nubmer of encryption blocks.
-     * Creates a Vector of the appropriate size.
-     * Converts each character to 8bit binary and places into the new Vector using charToBit.
-     * Fills in the end of the array with the required padding.
+     * Ideally this function would be extended in the future to decide upon the input file parsing method based on the input files encoding.
+     * This would likely be set through an option by the user.
+     * The function would still have to utilise default parsing methods for encryption and decryption if encoding wasn't provided.
      *
      * @param inFileString A string to be parsed and prepared for encryption.
      */
     void parseInputFile(std::string inputFileName);
+
+    /*
+     * Converts a char input string into its binary representation.
+     *
+     * First calculates the amount of padding required.
+     * Then the nubmer of encryption blocks.
+     * Creates a Vector of the appropriate size.
+     * Converts each character to 8bit binary and places into the new Vector using charToBin.
+     * Fills in the end of the array with the required padding.
+     *
+     * @param inFileString A string to be parsed and prepared for encryption.
+     */
+    void parseCharInputFile(std::string inFileString);
+
+    /*
+     * Converts a hex input string into its binary representation.
+     *
+     * No padding should be required as the hex string will have been generated through encryption
+     * Calculate the number of encryption blocks. The string lenght is halved because 2
+     * hex characters are required to represent 1 utf-8 character.
+     * Creates a Vector of the appropriate size.
+     * Converts each character to 4bit binary and places into the new Vector using hexToBin.
+     *
+     * @param inFileString A string to be parsed and prepared for encryption.
+     */
+    void parseHexInputFile(std::string inFileString);
 
     /*
      * Prints the IV, Key and Plain text vectors as well as all other variables in the class.
