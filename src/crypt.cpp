@@ -34,17 +34,21 @@ int main(int argc, char *argv[]) {
   // Prepares encryption parameters
   CryptParameters params = CryptParameters(inFileString.size());
   params.generateSubKeys(opt.key);
-  charToBit(opt.iv, params.ivVect);
   params.parseInputFile(inFileString);
+  charToBit(opt.iv, params.ivVect);
 
   std::cout << params.toString();
 
   DesAlgorithm cryptAlgo = DesAlgorithm();
-  EcbMode cryptMode = EcbMode(&params, &cryptAlgo);
-  cryptMode.encrypt();
-  std::cout << cryptMode.toString();
+  CryptMode* cryptMode;
+  switch(opt.cryptMode){
+      default:
+          cryptMode = new EcbMode(&params, &cryptAlgo);
+  }
+  cryptMode->encrypt();
+  std::cout << cryptMode->toString();
 
-  std::vector<unsigned> decimalOutput = cryptMode.resultToDecimal();
+  std::vector<unsigned> decimalOutput = cryptMode->resultToDecimal();
 
   outFileStream << hexVectorToString(decimalOutput);
 }
