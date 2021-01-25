@@ -7,9 +7,9 @@
 
 // TODO Declare constants for the dimensions of the arrays that are inuse
 
-CryptParameters::CryptParameters(int plainTextLength)
-    : numberOfBlocks(0), padding(0), plainTextLength(plainTextLength),
-      plainTextVect(nullptr),
+CryptParameters::CryptParameters(int inputTextLength)
+    : numberOfBlocks(0), padding(0), inputTextLength(inputTextLength),
+      inputTextVect(nullptr),
       keyVect(16, std::vector<unsigned>(48, 0)), ivVect(64, 0){}; 
 
 void CryptParameters::generateSubKeys(std::string &key) {
@@ -35,19 +35,19 @@ void CryptParameters::generateSubKeys(std::string &key) {
 void CryptParameters::parseInputFile(std::string inFileString) {
   // calculate the length of the last chunk of data to be encrypted and the
   // difference from 8 bytes
-  this->plainTextLength = inFileString.size();
-  this->padding = (8 - (this->plainTextLength % 8)) % 8;
+  this->inputTextLength = inFileString.size();
+  this->padding = (8 - (this->inputTextLength % 8)) % 8;
   // TODO Do I need to use the encryption size in the number of blocks
   // calculation???
-  this->numberOfBlocks = (this->plainTextLength + this->padding) / 8;
-  this->plainTextVect = new std::vector<unsigned>(numberOfBlocks * 64, 0);
+  this->numberOfBlocks = (this->inputTextLength + this->padding) / 8;
+  this->inputTextVect = new std::vector<unsigned>(numberOfBlocks * 64, 0);
   
-  charToBit(inFileString, *this->plainTextVect);
+  charToBit(inFileString, *this->inputTextVect);
 
   if (this->padding > 0) {
     // pointer to the last position in array
     for (int i = 0; i < this->padding * 8; i++) {
-      plainTextVect[(this->numberOfBlocks) - 1][64 - 1 - i];
+      inputTextVect[(this->numberOfBlocks) - 1][64 - 1 - i];
     }
   }
 }
@@ -60,10 +60,10 @@ std::string CryptParameters::toString() {
   returnString << "\n\nKey Vect: \n";
   returnString << binaryVectorToString2D(this->keyVect) << "\n";
 
-  returnString << "\nPlain Text Vect: \n";
-  returnString << binaryVectorToString(*this->plainTextVect) << "\n";
+  returnString << "\nInput Text Vect: \n";
+  returnString << binaryVectorToString(*this->inputTextVect) << "\n";
   
-  returnString << "\nPlain Text Length: " << this->plainTextLength
+  returnString << "\nPlain Text Length: " << this->inputTextLength
                << "\nNumber of Blocks: " << this->numberOfBlocks
                << "\nPadding: " << this->padding << "\n";
   return returnString.str();

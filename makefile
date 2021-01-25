@@ -45,17 +45,19 @@ $(ODIR)/.sentinel: $(OBJ) $(CRYPT_OBJ)
 .PHONY: test
 test: 
 	$(MAKE) $(ODIR)/.sentinel
+	$(MAKE) OLDencryptor
+	$(MAKE) OLDdecryptor
 	rm -rf test/
 	mkdir -p test 
 	ls -l >> test/input.txt
 	./OLDencryptor test/input.txt -o test/OLDencrypted.hex
-	./crypt encrypt test/input.txt -o test/encrypted.txt
-	./crypt decrypt test/OLDencrypted.hex -o decrypted.txt
+	./crypt encrypt test/input.txt -o test/encrypted.hex
+	#./crypt decrypt test/OLDencrypted.hex -o test/decrypted.txt
 	./OLDdecryptor test/encrypted.hex -o test/OLDdecrypted.txt
 	@echo 
 	@echo "Running diff on input and decrypted files -------------------------"
 	@echo 
-	cat test/decrypted.txt
+	#cat test/decrypted.txt
 	cat test/OLDdecrypted.txt
 
 .PHONY: all

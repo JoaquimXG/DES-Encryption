@@ -9,7 +9,7 @@ EcbMode::EcbMode(CryptParameters* params, CryptAlgorithm* cryptAlgo)
 //TODO documentation
 //ECB mode just loops through each block
 void EcbMode::encrypt(){
-  std::vector<unsigned>::iterator inputIt = (*params->plainTextVect).begin();
+  std::vector<unsigned>::iterator inputIt = (*params->inputTextVect).begin();
   std::vector<unsigned> encryptedBlock(64, 0);
   for (int i = 0; i < this->params->numberOfBlocks; i++){
     encryptedBlock = this->cryptAlgo->encrypt(params->keyVect, inputIt);

@@ -183,4 +183,3 @@ std::string binaryVectorToString2D(std::vector<std::vector<unsigned>>& vect){
   }
   return returnString.str();
 };
-

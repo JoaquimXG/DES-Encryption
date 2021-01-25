@@ -173,7 +173,7 @@ int main(int argc, char *argv[]) {
   std::cout << std::hex;
 
   arrayout(output, fileLength + padding, 9999999, 1, 1);
-  arrayout(output, fileLength + padding, 16, 0, 1);
+  //arrayout(output, fileLength + padding, 16, 0, 1);
 
   return 0;
 }

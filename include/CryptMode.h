@@ -15,7 +15,6 @@ class CryptMode {
     CryptParameters* params;
     CryptAlgorithm* cryptAlgo;
 
-    std::string toString();
 
     virtual void encrypt() = 0;
 
@@ -30,6 +29,8 @@ class CryptMode {
      * @return std::vector<unsigned> A vector containing the resultsVect represented in decimal.
      */
     std::vector<unsigned> resultToDecimal();
+
+    std::string toString();
 };
 
 class EcbMode: public CryptMode {

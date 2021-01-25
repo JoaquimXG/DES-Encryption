@@ -13,9 +13,7 @@ const int BYTE_SIZE = 8;
  *
  */
 class CryptOption {
-  int cryptMode;
 
-  bool decrypt; 
 
   //For future use
   int cryptMethod = DES;
@@ -23,8 +21,6 @@ class CryptOption {
   // decides the size of each block of encryption , used for the stream cypher
   // modes (OFB ,OFB)
   int cryptSize;
-
-
 
   /*
    * Parses all remaining arguments that aren't related to argument flags.
@@ -68,6 +64,12 @@ class CryptOption {
 
 
   public:
+  //The mode of encryption
+  int cryptMode;
+
+  //True if input file should be decrypted
+  bool toDecrypt; 
+
   /* Constructor */
   CryptOption();
 

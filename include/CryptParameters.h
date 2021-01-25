@@ -6,22 +6,18 @@
 
 class CryptParameters {
   public:
-    //IV converted to binary
     std::vector<unsigned> ivVect;
-
-    //Sixteen 48 bit subkeys for DES
     std::vector<std::vector<unsigned>> keyVect;
+    std::vector<unsigned>* inputTextVect;
 
-    std::vector<unsigned>* plainTextVect;
-
-    int plainTextLength;
+    int inputTextLength;
     int numberOfBlocks;
     int padding;
 
     /* Constructor 
-     * @param plainTextLength The length of the plaintext
+     * @param inputTextLength The length of the plaintext
      */
-    CryptParameters(int plainTextLength);
+    CryptParameters(int inputTextLength);
 
     /* 
      * Generates 16 48bit subkeys for DES from a 64 bit key.
