@@ -5,10 +5,7 @@
 
 EcbMode::EcbMode(CryptParameters* params, CryptOption* opt)
     : CryptMode(params, opt){
-        switch(opt->cryptMethod){
-            case DES:
-                this->cryptAlgo = new DesAlgorithm();
-        }
+        this->cryptAlgo = CryptMode::getAlgorithm(opt->cryptMode);
     };
 
 void EcbMode::encrypt(){
