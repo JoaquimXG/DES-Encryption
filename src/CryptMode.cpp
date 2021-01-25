@@ -3,8 +3,8 @@
 #include <sstream>
 #include <iostream>
 
-CryptMode::CryptMode(CryptParameters* params, CryptAlgorithm* cryptAlgo)
-    : resultVect(), params(params), cryptAlgo(cryptAlgo){};
+CryptMode::CryptMode(CryptParameters* params, CryptOption* opt)
+    : resultVect(), params(params){};
 
 
 std::vector<unsigned> CryptMode::resultToDecimal(){

@@ -1,16 +1,16 @@
+#ifndef DESENCRYPTION_INCLUDE_CRYPTMODE_H_
+#define DESENCRYPTION_INCLUDE_CRYPTMODE_H_
 #include <vector>
 #include "./CryptParameters.h"
 #include "./CryptAlgorithm.h"
-
-#ifndef DESENCRYPTION_INCLUDE_CRYPTMODE_H_
-#define DESENCRYPTION_INCLUDE_CRYPTMODE_H_
+#include "./CryptOption.h"
 
 class CryptMode {
   public:
 
   enum Mode { ECB, CBC, PCBC, CFB, OFB };
 
-    CryptMode(CryptParameters* params, CryptAlgorithm* cryptAlgo);
+    CryptMode(CryptParameters* params, CryptOption* opt);
     std::vector<unsigned> resultVect;
     CryptParameters* params;
     CryptAlgorithm* cryptAlgo;
@@ -30,12 +30,17 @@ class CryptMode {
      */
     std::vector<unsigned> resultToDecimal();
 
+    /*
+     * Converts the value of the binary results Vector to a string.
+     *
+     * @return std::string A formatted string representation of the resultsVect.
+     */
     std::string toString();
 };
 
 class EcbMode: public CryptMode {
   public:
-    EcbMode(CryptParameters* params, CryptAlgorithm* cryptAlgo);
+    EcbMode(CryptParameters* params, CryptOption* opt);
 
     void encrypt() override;
 

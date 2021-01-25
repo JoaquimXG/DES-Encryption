@@ -15,8 +15,6 @@ const int BYTE_SIZE = 8;
 class CryptOption {
 
 
-  //For future use
-  int cryptMethod = DES;
 
   // decides the size of each block of encryption , used for the stream cypher
   // modes (OFB ,OFB)
@@ -59,8 +57,9 @@ class CryptOption {
 
 
   public:
-  //The mode of encryption
+  //The mode and method of encryption, currently method is hardcoded
   int cryptMode;
+  int cryptMethod = DES;
 
   //True if input file should be decrypted
   bool toDecrypt; 

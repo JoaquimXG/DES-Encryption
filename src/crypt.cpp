@@ -19,7 +19,6 @@ int main(int argc, char *argv[]) {
   };
 
   Debugger debug = Debugger(opt);
-
   debug.print(opt.toString());
 
   // Get input file contents
@@ -41,11 +40,11 @@ int main(int argc, char *argv[]) {
 
   debug.print(params.toString());
 
-  DesAlgorithm cryptAlgo = DesAlgorithm();
+  //Choose mode of encryption
   CryptMode* cryptMode;
   switch(opt.cryptMode){
       default:
-          cryptMode = new EcbMode(&params, &cryptAlgo);
+          cryptMode = new EcbMode(&params, &opt);
   }
 
   cryptMode->encrypt();

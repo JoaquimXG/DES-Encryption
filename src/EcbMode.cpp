@@ -1,10 +1,15 @@
 #include "../include/CryptMode.h"
-#include "../include/CryptAlgorithm.h"
+#include "../include/DesAlgorithm.h"
 #include <vector>
 #include <iostream>
 
-EcbMode::EcbMode(CryptParameters* params, CryptAlgorithm* cryptAlgo)
-    : CryptMode(params, cryptAlgo){};
+EcbMode::EcbMode(CryptParameters* params, CryptOption* opt)
+    : CryptMode(params, opt){
+        switch(opt->cryptMethod){
+            case DES:
+                this->cryptAlgo = new DesAlgorithm();
+        }
+    };
 
 //TODO documentation
 //ECB mode just loops through each block
