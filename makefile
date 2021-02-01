@@ -27,14 +27,19 @@ _CRYPT_OBJ = crypt.o
 CRYPT_OBJ = $(patsubst %,$(ODIR)/%,$(_CRYPT_OBJ))
 
 # Rule for compiling any object file from .cpp file
-$(ODIR)/%.o: src/%.cpp $(DEPS)
+$(ODIR)/%.o: src/%.cpp $(DEPS) | $(ODIR)
 	$(CC) -g -c -o $@ $< $(CFLAGS)
+
 
 # Rule for compiling both binaries, encryptor and decryptor
 # Sentinel file is used to ensure all results are up to date
 $(ODIR)/.sentinel: $(OBJ) $(CRYPT_OBJ)
 	$(CC) -g -o crypt $(OBJ) $(CRYPT_OBJ) $(CFLAGS)
 	touch $(ODIR)/.sentinel
+
+$(ODIR):
+	mkdir -p $(ODIR)
+
 
 .PHONY: test
 test: 
