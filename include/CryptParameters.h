@@ -16,7 +16,8 @@ class CryptParameters {
     bool toDecrypt;
 
     /* Constructor 
-     * @param inputTextLength The length of the plaintext
+     * @param int inputTextLength The length of the plaintext
+     * @param bool toDecrypt True if the paramaters should be parsed for decryption
      */
     CryptParameters(int inputTextLength, bool toDecrypt);
 

@@ -8,9 +8,7 @@
 #include <math.h>
 #include "../include/cryptUtils.h"
 #include "../include/OLDpermutations.h"
-
-
-//TODO define constants for things like height and width
+#include "../include/constants.h"
 
 std::string getFileContents(std::string fileName){
   std::ifstream fileStream;
@@ -93,8 +91,8 @@ void charToBin(std::string inString, std::vector<unsigned>& outVector) {
   for (int i = 0; i < stringLength; i++) {
 
     std::bitset<8> tempBitset(inString.c_str()[i]);
-    for (int j = 0; j < 8; j++) {
-      outVector[(i*8)+j] = tempBitset[8-1-j];
+    for (int j = 0; j < CHARBITS; j++) {
+      outVector[(i*CHARBITS)+j] = tempBitset[CHARBITS-1-j];
     }
   }
   return;
@@ -106,7 +104,7 @@ void charToBin(std::string inString, std::vector<std::vector<unsigned>>& outVect
   for (int i = 0; i < stringLength; i++) {
     std::bitset<8> tempBitset(inString.c_str()[i]);
     for (int k = 7; k > -1; k--) {
-      outVector[i/8][((i*8)+k)%64] = tempBitset[k];
+      outVector[i/CHARBITS][((i*CHARBITS)+k)%64] = tempBitset[k];
     }
   }
   return;

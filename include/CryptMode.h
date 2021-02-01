@@ -213,6 +213,7 @@ class PcbcMode: public CryptMode {
  */
 class CfbMode: public CryptMode {
     std::vector<unsigned> xorVect;
+    int cryptSize;
   public:
     CfbMode(CryptParameters* params, CryptOption* opt);
 
@@ -272,6 +273,7 @@ class CfbMode: public CryptMode {
  */
 class OfbMode: public CryptMode {
     std::vector<unsigned> xorVect;
+    int cryptSize;
   public:
     OfbMode(CryptParameters* params, CryptOption* opt);
 

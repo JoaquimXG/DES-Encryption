@@ -1,19 +1,20 @@
 #include "../include/CryptOption.h"
 #include "../include/CryptMode.h"
+#include <cstdlib>
 #include <getopt.h>
 #include <iostream>
 #include <sstream>
 #include <string.h>
 
 CryptOption::CryptOption()
-    : cryptMode(CryptMode::ECB), toDecrypt(false), cryptMethod(DES), cryptSize(8*BYTE_SIZE),
+    : cryptMode(CryptMode::ECB), toDecrypt(false), cryptMethod(DES), cryptSize(0),
       inputFileName(), outputFileName(){};
 
 int CryptOption::parseCommandLineArguments(int argc, char *argv[]) {
   std::string cryptModeArgument;
 
   int option;
-  while ((option = getopt(argc, argv, "m:o:i:k:hd")) != -1) {
+  while ((option = getopt(argc, argv, "m:o:i:k:s:hd")) != -1) {
     switch (option) {
     case 'm':
       cryptModeArgument = std::string(optarg);
@@ -32,6 +33,9 @@ int CryptOption::parseCommandLineArguments(int argc, char *argv[]) {
         return -1;
       };
       this->key = optarg;
+      break;
+    case 's':
+      this->cryptSize = std::atoi(optarg);
       break;
     case 'd':
       this->debug = true;
@@ -126,6 +130,7 @@ bool CryptOption::checkFileArguments() {
 }
 
 bool CryptOption::checkEncryptionModeArgument(std::string cryptModeArgument) {
+  int localCryptSize = 64;
   if (cryptModeArgument.empty()) {
     std::cout
         << "\n[+] No mode of operation was chosen, using default (ECB Mode)";
@@ -140,14 +145,17 @@ bool CryptOption::checkEncryptionModeArgument(std::string cryptModeArgument) {
   } else if (cryptModeArgument == "cfb" || cryptModeArgument == "CFB") {
     std::cout << "\n[+] Utilising CFB Mode of operation";
     this->cryptMode = CryptMode::CFB;
-    this->cryptSize = 8;
+    localCryptSize = 8;
   } else if (cryptModeArgument == "ofb" || cryptModeArgument == "OFB") {
     std::cout << "\n[+] Utilising OFB Mode of operation";
     this->cryptMode = CryptMode::OFB;
-    this->cryptSize = 8;
+    localCryptSize = 8;
   } else {
     std::cout << "\n[-] No valid encryption mode selected";
     return false;
+  }
+  if (this->cryptSize == 0){
+    this->cryptSize = localCryptSize;
   }
 
   return true;

@@ -21,6 +21,8 @@ int main(int argc, char *argv[]) {
   Debugger debug = Debugger(option);
   debug.print(option.toString());
 
+  std::cout << "Crypt size is : " << option.cryptSize << "\n";
+
   // Get input file contents
   std::string inFileString = getFileContents(option.inputFileName);
   if (inFileString.compare("") == 0){

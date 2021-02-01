@@ -14,13 +14,13 @@ CFLAGS=-I$(IDIR)
 ODIR=src/obj
 
 # Converting header file names to include IDIR
-_DEPS = OLDpermutations.h OLDfunctions.h OLDOptions.h CryptParameters.h CryptOption.h CryptMode.h CryptAlgorithm.h DesAlgorithm.h Debugger.h cryptUtils.h 
+_DEPS = OLDpermutations.h OLDfunctions.h OLDOptions.h CryptParameters.h CryptOption.h CryptMode.h CryptAlgorithm.h DesAlgorithm.h Debugger.h cryptUtils.h constants.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 # Converting object file names to include ODIR
 # encryptor and decryptor must be compiled separately
 # as both contain 'main' functions
-_OBJ = OLDdes.o OLDfunctions.o OLDpermutations.o CryptParameters.o CryptOption.o CryptMode.o EcbMode.o CbcMode.o PcbcMode.o CfbMode.o OfbMode.o DesAlgorithm.o cryptUtils.o
+_OBJ = OLDdes.o OLDfunctions.o OLDpermutations.o CryptParameters.o CryptOption.o CryptMode.o EcbMode.o CbcMode.o PcbcMode.o CfbMode.o OfbMode.o DesAlgorithm.o cryptUtils.o constants.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 _ENCRYPT_OBJ = OLDencryptor.o
@@ -60,11 +60,11 @@ test:
 	./crypt encrypt test/input.txt -o test/encryptedPcbc.hex -m pcbc
 	./crypt decrypt test/encryptedPcbc.hex -o test/decryptedPcbc.txt -m pcbc
 	#Testing CFB Crypt
-	./crypt encrypt test/input.txt -o test/encryptedCfb.hex -m cfb
-	./crypt decrypt test/encryptedCfb.hex -o test/decryptedCfb.txt -m cfb
+	./crypt encrypt test/input.txt -o test/encryptedCfb.hex -m cfb -s 8
+	./crypt decrypt test/encryptedCfb.hex -o test/decryptedCfb.txt -m cfb -s 8
 	#Testing CFB Crypt
-	./crypt encrypt test/input.txt -o test/encryptedOfb.hex -m ofb
-	./crypt decrypt test/encryptedOfb.hex -o test/decryptedOfb.txt -m ofb
+	./crypt encrypt test/input.txt -o test/encryptedOfb.hex -m ofb -s 4
+	./crypt decrypt test/encryptedOfb.hex -o test/decryptedOfb.txt -m ofb -s 4
 	@echo 
 	@echo "Running diff on input and decrypted files -------------------------"
 	@echo 
