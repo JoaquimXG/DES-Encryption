@@ -116,8 +116,8 @@ class EcbMode: public CryptMode {
  * the IV for the first round, then with the preceeding ciphertext for remaining rounds.
  *
  * This process requires that during decryption, the first decrypted block must be XOR'd with 
- * the IV before decryption occurs to mirror the encryption. 
- * Remiaining blocks require to be XOR'd with the preceeding cypher text before decryption.
+ * the IV after decryption occurs to mirror the encryption. 
+ * Remiaining blocks require to be XOR'd with the preceeding cypher text after decryption.
  * This allows for the decryption in CBC to be parallelized as all the information required to 
  * each block is available before decryption begins.
  * Encryption must be performed sequentially as each block requires the previous ciphertext.
@@ -158,19 +158,17 @@ class CbcMode: public CryptMode {
 /*
  * PCBC Mode of encryption
  *
- * //TODO rewrite Documentation
  * No preprocessing or post processing is required.
  *
  * The encryption and decryption algorithms are not symmetrical.
  * This is because during the encryption process the the plainText is XOR'd initially with 
- * the IV for the first round, then with the preceeding ciphertext for remaining rounds.
+ * the IV for the first round, then with an XOR of the the previous plainText and previous ciphertext.
  *
  * This process requires that during decryption, the first decrypted block must be XOR'd with 
- * the IV before decryption occurs to mirror the encryption. 
- * Remiaining blocks require to be XOR'd with the preceeding cypher text before decryption.
- * This allows for the decryption in CBC to be parallelized as all the information required to 
- * each block is available before decryption begins.
- * Encryption must be performed sequentially as each block requires the previous ciphertext.
+ * the IV after decryption occurs to mirror the encryption. 
+ * Remiaining blocks require to be XOR'd with the XOR of the preceeding cipher text 
+ * and preceeding plain text after decryption.
+ * Both encryption and decryption must be performed sequentially as each block requires the result of the previous block.
  *
  */
 class PcbcMode: public CryptMode {
@@ -180,28 +178,27 @@ class PcbcMode: public CryptMode {
 
     /*
      * Encrypts the entire input
-     * //TODO rewrite Documentation
      *
      * Loops through each block of plaintext.
-     * XORs the block with the IV for the first round, with the previous ciphertext
-     * for remaining rounds.
-     * Resulting of XOR is encrypted using the given encryption algorithm.
-     * The cyphertext block is stored to use for XOR in the next round.
+     * XORs the block with the IV for the first round.
+     * For remaining rounds, first XOR the previous plaintext with the previous ciphertext.
+     * XOR the current plaintext with the result.
+     * Result of XOR is encrypted using the given encryption algorithm.
+     * The result of XOR between ciphertext and plaintext blocks are stored for use next round.
      *
      */
     void encrypt() override;
 
     /*
      * Decrypts the entire input
-     * //TODO rewrite Documentation
      *
      * Loops through each block of ciphertext.
-     * Runs the block through the provided decryption algorithm.
-     * XORs result of decryption initially with the IV then with the previous ciphertext for remaining rounds.
-     *
-     * This version stores the current ciphertext for use in XOR in the next round.
-     * This is just for convenience, if this algorithm were to be parallelized then each round should retrieve
-     * either the IV or previous ciphertext as required.
+     * Decrypts the block, keeping a copy of the ciphertext.
+     * XORs the block with the IV for the first round.
+     * For remaining rounds, first XOR the previous ciphertext with the previous plaintext.
+     * XOR the current ciphertext (named plaintextBlock in this function as it will hold the plaintext after XOR)
+     * with the result.
+     * The result of XOR between ciphertext and plaintext blocks are stored for use next round.
      *
      */
     void decrypt() override;
