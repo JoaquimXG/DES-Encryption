@@ -20,7 +20,7 @@ DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 # Converting object file names to include ODIR
 # encryptor and decryptor must be compiled separately
 # as both contain 'main' functions
-_OBJ = OLDdes.o OLDfunctions.o OLDpermutations.o CryptParameters.o CryptOption.o CryptMode.o EcbMode.o CbcMode.o PcbcMode.o DesAlgorithm.o cryptUtils.o
+_OBJ = OLDdes.o OLDfunctions.o OLDpermutations.o CryptParameters.o CryptOption.o CryptMode.o EcbMode.o CbcMode.o PcbcMode.o CfbMode.o DesAlgorithm.o cryptUtils.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 _ENCRYPT_OBJ = OLDencryptor.o
@@ -60,18 +60,18 @@ test:
 	./crypt encrypt test/input.txt -o test/encryptedPcbc.hex -m pcbc
 	./crypt decrypt test/encryptedPcbc.hex -o test/decryptedPcbc.txt -m pcbc
 	#Testing PCBC Crypt using old decryptor
-	./crypt encrypt test/input.txt -o test/encryptedOfb.hex -m ofb
+	./crypt encrypt test/input.txt -o test/encryptedCfb.hex -m cfb
 	#--------------------
-	./crypt decrypt test/encryptedOfb.hex -o test/decryptedOfb.txt -m ofb
-	./OLDdecryptor test/encryptedOfb.hex -o test/OLDdecryptedOfb.txt -m ofb
+	./crypt decrypt test/encryptedCfb.hex -o test/decryptedCfb.txt -m cfb
+	./OLDdecryptor test/encryptedCfb.hex -o test/OLDdecryptedCfb.txt -m cfb
 	@echo 
 	@echo "Running diff on input and decrypted files -------------------------"
 	@echo 
 	cat test/decrypted.txt
 	cat test/decryptedCbc.txt
 	cat test/decryptedPcbc.txt
-	#cat test/decryptedOfb.txt
-	#cat test/OLDdecryptedOfb.txt
+	cat test/decryptedCfb.txt
+	cat test/OLDdecryptedCfb.txt
 
 .PHONY: all
 all: 

@@ -204,4 +204,57 @@ class PcbcMode: public CryptMode {
     void decrypt() override;
 };
 
+/*
+ * CFB Mode of encryption
+ *
+ * //TODO rewrite documentation
+ *
+ * No preprocessing or post processing is required.
+ *
+ * The encryption and decryption algorithms are not symmetrical.
+ * This is because during the encryption process the the plainText is XOR'd initially with 
+ * the IV for the first round, then with an XOR of the the previous plainText and previous ciphertext.
+ *
+ * This process requires that during decryption, the first decrypted block must be XOR'd with 
+ * the IV after decryption occurs to mirror the encryption. 
+ * Remiaining blocks require to be XOR'd with the XOR of the preceeding cipher text 
+ * and preceeding plain text after decryption.
+ * Both encryption and decryption must be performed sequentially as each block requires the result of the previous block.
+ *
+ */
+class CfbMode: public CryptMode {
+    std::vector<unsigned> xorVect;
+  public:
+    CfbMode(CryptParameters* params, CryptOption* opt);
+
+    /*
+     * Encrypts the entire input
+     * //TODO rewrite documentation
+     *
+     * Loops through each block of plaintext.
+     * XORs the block with the IV for the first round.
+     * For remaining rounds, first XOR the previous plaintext with the previous ciphertext.
+     * XOR the current plaintext with the result.
+     * Result of XOR is encrypted using the given encryption algorithm.
+     * The result of XOR between ciphertext and plaintext blocks are stored for use next round.
+     *
+     */
+    void encrypt() override;
+
+    /*
+     * Decrypts the entire input
+     * //TODO rewrite documentation
+     *
+     * Loops through each block of ciphertext.
+     * Decrypts the block, keeping a copy of the ciphertext.
+     * XORs the block with the IV for the first round.
+     * For remaining rounds, first XOR the previous ciphertext with the previous plaintext.
+     * XOR the current ciphertext (named plaintextBlock in this function as it will hold the plaintext after XOR)
+     * with the result.
+     * The result of XOR between ciphertext and plaintext blocks are stored for use next round.
+     *
+     */
+    void decrypt() override;
+};
+
 #endif

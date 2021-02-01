@@ -49,6 +49,9 @@ int main(int argc, char *argv[]) {
     case CryptMode::Mode::PCBC:
       cryptMode = new PcbcMode(&params, &option);
       break;
+    case CryptMode::Mode::CFB:
+      cryptMode = new CfbMode(&params, &option);
+      break;
     default:
       cryptMode = new EcbMode(&params, &option);
   }
