@@ -56,18 +56,22 @@ test:
 	#Testing CBC crypt
 	./crypt encrypt test/input.txt -o test/encryptedCbc.hex -m cbc
 	./crypt decrypt test/encryptedCbc.hex -o test/decryptedCbc.txt -m cbc
-	#Testing PCBC Crypt using old decryptor
+	#Testing PCBC crypt
 	./crypt encrypt test/input.txt -o test/encryptedPcbc.hex -m pcbc
-	#--------------------
 	./crypt decrypt test/encryptedPcbc.hex -o test/decryptedPcbc.txt -m pcbc
-	./OLDdecryptor test/encryptedPcbc.hex -o test/OLDdecryptedPcbc.txt -m pcbc
+	#Testing PCBC Crypt using old decryptor
+	./crypt encrypt test/input.txt -o test/encryptedOfb.hex -m ofb
+	#--------------------
+	./crypt decrypt test/encryptedOfb.hex -o test/decryptedOfb.txt -m ofb
+	./OLDdecryptor test/encryptedOfb.hex -o test/OLDdecryptedOfb.txt -m ofb
 	@echo 
 	@echo "Running diff on input and decrypted files -------------------------"
 	@echo 
 	cat test/decrypted.txt
 	cat test/decryptedCbc.txt
-	cat test/OLDdecryptedPcbc.txt
 	cat test/decryptedPcbc.txt
+	#cat test/decryptedOfb.txt
+	#cat test/OLDdecryptedOfb.txt
 
 .PHONY: all
 all: 
