@@ -4,7 +4,7 @@ SHELL := bash
 .DELETE_ON_ERROR:
 
 # Header directory
-IDIR =include
+IDIR = include
 
 # Compiler and flags
 CC=g++
@@ -59,11 +59,14 @@ test:
 	#Testing PCBC crypt
 	./crypt encrypt test/input.txt -o test/encryptedPcbc.hex -m pcbc
 	./crypt decrypt test/encryptedPcbc.hex -o test/decryptedPcbc.txt -m pcbc
-	#Testing PCBC Crypt using old decryptor
+	#Testing CFB Crypt
 	./crypt encrypt test/input.txt -o test/encryptedCfb.hex -m cfb
-	#--------------------
 	./crypt decrypt test/encryptedCfb.hex -o test/decryptedCfb.txt -m cfb
-	./OLDdecryptor test/encryptedCfb.hex -o test/OLDdecryptedCfb.txt -m cfb
+	#Testing OFB Crypt using old decryptor
+	./crypt encrypt test/input.txt -o test/encryptedOfb.hex -m ofb
+	#--------------------
+	./crypt decrypt test/encryptedOfb.hex -o test/decryptedOfb.txt -m ofb
+	./OLDdecryptor test/encryptedOfb.hex -o test/OLDdecryptedOfb.txt -m ofb
 	@echo 
 	@echo "Running diff on input and decrypted files -------------------------"
 	@echo 
@@ -71,7 +74,8 @@ test:
 	cat test/decryptedCbc.txt
 	cat test/decryptedPcbc.txt
 	cat test/decryptedCfb.txt
-	cat test/OLDdecryptedCfb.txt
+	cat test/OLDdecryptedOfb.txt
+	cat test/decryptedOfb.txt
 
 .PHONY: all
 all: 
