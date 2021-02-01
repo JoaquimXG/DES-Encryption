@@ -11,33 +11,35 @@ PcbcMode::PcbcMode(CryptParameters* params, CryptOption* opt)
 
 void PcbcMode::encrypt(){
   std::vector<unsigned>::iterator inputIt = (*params->inputTextVect).begin();
-  std::vector<unsigned> encryptedBlock(64, 0);
+  std::vector<unsigned> ciphertextBlock(64, 0);
   xorVect = params->ivVect;
 
   for (int i = 0; i < this->params->numberOfBlocks; i++){
-    XOR(inputIt, xorVect.begin(), inputIt, 64);
+    XOR(inputIt, xorVect.begin(), xorVect.begin(), 64);
 
-    encryptedBlock = this->cryptAlgo->encrypt(params->keyVect, inputIt);
-    resultVect.insert(resultVect.end(), encryptedBlock.begin(), encryptedBlock.end());
+    ciphertextBlock = this->cryptAlgo->encrypt(params->keyVect, xorVect.begin());
+    resultVect.insert(resultVect.end(), ciphertextBlock.begin(), ciphertextBlock.end());
 
-    xorVect = encryptedBlock;
+    std::vector<unsigned> plaintextBlock(inputIt, inputIt+64);
+    XOR(plaintextBlock, ciphertextBlock, xorVect, 64);
+
     inputIt = inputIt + 64;
   }
 }
 
 void PcbcMode::decrypt(){
   std::vector<unsigned>::iterator inputIt = (*params->inputTextVect).begin();
-  std::vector<unsigned> decryptedBlock(64, 0);
+  std::vector<unsigned> plaintextBlock(64, 0);
   xorVect = params->ivVect;
 
   for (int i = 0; i < this->params->numberOfBlocks; i++){
-    decryptedBlock = this->cryptAlgo->decrypt(params->keyVect, inputIt);
-    XOR(decryptedBlock.begin(), xorVect.begin(), decryptedBlock.begin(), 64);
+    plaintextBlock = this->cryptAlgo->decrypt(params->keyVect, inputIt);
+    XOR(plaintextBlock.begin(), xorVect.begin(), plaintextBlock.begin(), 64);
 
-    resultVect.insert(resultVect.end(), decryptedBlock.begin(), decryptedBlock.end());
+    resultVect.insert(resultVect.end(), plaintextBlock.begin(), plaintextBlock.end());
 
-    std::vector<unsigned> tempVector(inputIt, inputIt+64);
-    xorVect = tempVector;
+    std::vector<unsigned> ciphertextBlock(inputIt, inputIt+64);
+    XOR(ciphertextBlock, plaintextBlock, xorVect, 64);
 
     inputIt = inputIt + 64;
   }

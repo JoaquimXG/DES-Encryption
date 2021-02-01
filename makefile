@@ -59,7 +59,7 @@ test:
 	#Testing PCBC Crypt using old decryptor
 	./crypt encrypt test/input.txt -o test/encryptedPcbc.hex -m pcbc
 	#--------------------
-	./crypt decrypt test/encryptedPcbc.hex -o test/decryptedPcBc.txt -m pcbc
+	./crypt decrypt test/encryptedPcbc.hex -o test/decryptedPcbc.txt -m pcbc
 	./OLDdecryptor test/encryptedPcbc.hex -o test/OLDdecryptedPcbc.txt -m pcbc
 	@echo 
 	@echo "Running diff on input and decrypted files -------------------------"

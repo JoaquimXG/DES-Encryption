@@ -52,6 +52,8 @@ class DesAlgorithm: public CryptAlgorithm {
     /*
      * Performs encryption using the DES algorithm
      *
+     * Does not alter the input text, returns the result instead.
+     *
      * @param keyGroup A 16 x 48 2D vector containing 16 48 bit DES keys
      * @param plaintextIterator An iterator pointing to the start of the plain text array block to be encrypted.
      * @return std::vector<unsigned> A vector containing the result of the DES algorithm.
@@ -60,6 +62,8 @@ class DesAlgorithm: public CryptAlgorithm {
 
     /*
      * Performs decryption using the DES algorithm
+     *
+     * Does not alter the input text, returns the result instead.
      *
      * @param keyGroup A 16 x 48 2D vector containing 16 48 bit DES keys
      * @param plaintextIterator An iterator pointing to the start of the plain text array block to be encrypted.
