@@ -67,8 +67,6 @@ class CryptMode {
  * Both encryption and decryption, ECB mode simply loops through each 64 bit section of input
  * and performs the selected encryption algorithms encrypt or decrypt function accordingly.
  *
- * No preprocessing or post processing is required.
- *
  */
 class EcbMode: public CryptMode {
   public:
@@ -108,8 +106,6 @@ class EcbMode: public CryptMode {
 
 /*
  * CBC Mode of encryption
- *
- * No preprocessing or post processing is required.
  *
  * The encryption and decryption algorithms are not symmetrical.
  * This is because during the encryption process the the plainText is XOR'd initially with 
@@ -158,8 +154,6 @@ class CbcMode: public CryptMode {
 /*
  * PCBC Mode of encryption
  *
- * No preprocessing or post processing is required.
- *
  * The encryption and decryption algorithms are not symmetrical.
  * This is because during the encryption process the the plainText is XOR'd initially with 
  * the IV for the first round, then with an XOR of the the previous plainText and previous ciphertext.
@@ -207,19 +201,14 @@ class PcbcMode: public CryptMode {
 /*
  * CFB Mode of encryption
  *
- * //TODO rewrite documentation
+ * Turns Block ciphers into self-synchronising stream ciphers by using the encryption algorithm
+ * to generate a random string of bits.
+ * A section of the most significant bits is taken, BLOCKSIZE bits in size.
+ * This section is used to XOR with the plaintext to generate ciphertext.
  *
- * No preprocessing or post processing is required.
- *
- * The encryption and decryption algorithms are not symmetrical.
- * This is because during the encryption process the the plainText is XOR'd initially with 
- * the IV for the first round, then with an XOR of the the previous plainText and previous ciphertext.
- *
- * This process requires that during decryption, the first decrypted block must be XOR'd with 
- * the IV after decryption occurs to mirror the encryption. 
- * Remiaining blocks require to be XOR'd with the XOR of the preceeding cipher text 
- * and preceeding plain text after decryption.
- * Both encryption and decryption must be performed sequentially as each block requires the result of the previous block.
+ * As the encryption algorithm is only used to generate seemingly random bits and the bits are required to be 
+ * the same for encryption and decryption, for both decryption and encryption in this mode the encryption
+ * algorithm is run in encryption.
  *
  */
 class CfbMode: public CryptMode {
@@ -229,51 +218,57 @@ class CfbMode: public CryptMode {
 
     /*
      * Encrypts the entire input
-     * //TODO rewrite documentation
      *
-     * Loops through each block of plaintext.
-     * XORs the block with the IV for the first round.
-     * For remaining rounds, first XOR the previous plaintext with the previous ciphertext.
-     * XOR the current plaintext with the result.
-     * Result of XOR is encrypted using the given encryption algorithm.
-     * The result of XOR between ciphertext and plaintext blocks are stored for use next round.
+     * First choose an encryption size and set as BLOCKSIZE.
+     * This will decide how many bits of plaintext are XOR'd with the result of the encryption algorithm.
+     *
+     * Intialliy encrypt the IV in the first round.
+     * Result of encryption is XOR'd with 1, 4, 8 or 64 bits of the plaintext, denoted by BLOCKSIZE.
+     * BLOCKSIZE most significant bits of XOR is kept as the ciphertext.
+     *
+     * After XOR, IV is leftShifted BLOCKSIZE bits and the newly generated ciphertext
+     * bits fill the least significant bits of IV.
+     *
+     * This new IV is used for the next round.
      *
      */
     void encrypt() override;
 
     /*
      * Decrypts the entire input
-     * //TODO rewrite documentation
      *
-     * Loops through each block of ciphertext.
-     * Decrypts the block, keeping a copy of the ciphertext.
-     * XORs the block with the IV for the first round.
-     * For remaining rounds, first XOR the previous ciphertext with the previous plaintext.
-     * XOR the current ciphertext (named plaintextBlock in this function as it will hold the plaintext after XOR)
-     * with the result.
-     * The result of XOR between ciphertext and plaintext blocks are stored for use next round.
+     * First choose an encryption size and set as BLOCKSIZE.
+     * This will decide how many bits of plaintext are XOR'd with the result of the encryption algorithm.
+     *
+     * Intialliy encrypt the IV in the first round.
+     * Result of encryption is XOR'd with 1, 4, 8 or 64 bits of the plaintext, denoted by BLOCKSIZE.
+     * BLOCKSIZE most significant bits of XOR is kept as the ciphertext.
+     *
+     * After XOR, IV is leftShifted BLOCKSIZE bits and the BLOCKSIZE bits of the previous plaintext
+     * bits fill the least significant bits of IV.
+     *
+     * This new IV is used for the next round.
      *
      */
     void decrypt() override;
 };
 
 /*
- * CFB Mode of encryption
+ * OFB Mode of encryption
  *
- * //TODO rewrite documentation
+ * Turns Block ciphers into self-synchronising stream ciphers by using the encryption algorithm
+ * to generate a random string of bits.
+ * A section of the most significant bits is taken, BLOCKSIZE bits in size.
+ * This section is used to XOR with the plaintext to generate ciphertext.
  *
- * No preprocessing or post processing is required.
+ * This mode is very similar to CFB, the difference being that the bits taken to pad the IV after left shift 
+ * are taken from the result of the encryption algorithm before XOR with plaintext.
  *
- * The encryption and decryption algorithms are not symmetrical.
- * This is because during the encryption process the the plainText is XOR'd initially with 
- * the IV for the first round, then with an XOR of the the previous plainText and previous ciphertext.
+ * Due to the symmetrical nature of this mode, encryption and decryption is performed by the same function
  *
- * This process requires that during decryption, the first decrypted block must be XOR'd with 
- * the IV after decryption occurs to mirror the encryption. 
- * Remiaining blocks require to be XOR'd with the XOR of the preceeding cipher text 
- * and preceeding plain text after decryption.
- * Both encryption and decryption must be performed sequentially as each block requires the result of the previous block.
- *
+ * As the encryption algorithm is only used to generate seemingly random bits and the bits are required to be 
+ * the same for encryption and decryption, for both decryption and encryption in this mode the encryption
+ * algorithm is run in encryption.
  */
 class OfbMode: public CryptMode {
     std::vector<unsigned> xorVect;
@@ -282,29 +277,27 @@ class OfbMode: public CryptMode {
 
     /*
      * Encrypts the entire input
-     * //TODO rewrite documentation
      *
-     * Loops through each block of plaintext.
-     * XORs the block with the IV for the first round.
-     * For remaining rounds, first XOR the previous plaintext with the previous ciphertext.
-     * XOR the current plaintext with the result.
-     * Result of XOR is encrypted using the given encryption algorithm.
-     * The result of XOR between ciphertext and plaintext blocks are stored for use next round.
+     * First choose an encryption size and set as BLOCKSIZE.
+     * This will decide how many bits of plaintext are XOR'd with the result of the encryption algorithm.
+     *
+     * Intialliy encrypt the IV in the first round.
+     *
+     * IV is then leftShifted BLOCKSIZE bits and the newly generated ciphertext
+     * bits fill the least significant bits of IV.
+     *
+     * This new IV is used for the next round.
+     *
+     * Result of encryption is XOR'd with 1, 4, 8 or 64 bits of the plaintext, denoted by BLOCKSIZE.
+     * BLOCKSIZE most significant bits of XOR is kept as the ciphertext.
      *
      */
     void encrypt() override;
 
     /*
      * Decrypts the entire input
-     * //TODO rewrite documentation
      *
-     * Loops through each block of ciphertext.
-     * Decrypts the block, keeping a copy of the ciphertext.
-     * XORs the block with the IV for the first round.
-     * For remaining rounds, first XOR the previous ciphertext with the previous plaintext.
-     * XOR the current ciphertext (named plaintextBlock in this function as it will hold the plaintext after XOR)
-     * with the result.
-     * The result of XOR between ciphertext and plaintext blocks are stored for use next round.
+     * As OFB is entirely symmetrical, this function just calls the encryption function.
      *
      */
     void decrypt() override;
