@@ -155,4 +155,56 @@ class CbcMode: public CryptMode {
     void decrypt() override;
 };
 
+/*
+ * PCBC Mode of encryption
+ *
+ * //TODO rewrite Documentation
+ * No preprocessing or post processing is required.
+ *
+ * The encryption and decryption algorithms are not symmetrical.
+ * This is because during the encryption process the the plainText is XOR'd initially with 
+ * the IV for the first round, then with the preceeding ciphertext for remaining rounds.
+ *
+ * This process requires that during decryption, the first decrypted block must be XOR'd with 
+ * the IV before decryption occurs to mirror the encryption. 
+ * Remiaining blocks require to be XOR'd with the preceeding cypher text before decryption.
+ * This allows for the decryption in CBC to be parallelized as all the information required to 
+ * each block is available before decryption begins.
+ * Encryption must be performed sequentially as each block requires the previous ciphertext.
+ *
+ */
+class PcbcMode: public CryptMode {
+    std::vector<unsigned> xorVect;
+  public:
+    PcbcMode(CryptParameters* params, CryptOption* opt);
+
+    /*
+     * Encrypts the entire input
+     * //TODO rewrite Documentation
+     *
+     * Loops through each block of plaintext.
+     * XORs the block with the IV for the first round, with the previous ciphertext
+     * for remaining rounds.
+     * Resulting of XOR is encrypted using the given encryption algorithm.
+     * The cyphertext block is stored to use for XOR in the next round.
+     *
+     */
+    void encrypt() override;
+
+    /*
+     * Decrypts the entire input
+     * //TODO rewrite Documentation
+     *
+     * Loops through each block of ciphertext.
+     * Runs the block through the provided decryption algorithm.
+     * XORs result of decryption initially with the IV then with the previous ciphertext for remaining rounds.
+     *
+     * This version stores the current ciphertext for use in XOR in the next round.
+     * This is just for convenience, if this algorithm were to be parallelized then each round should retrieve
+     * either the IV or previous ciphertext as required.
+     *
+     */
+    void decrypt() override;
+};
+
 #endif

@@ -46,10 +46,14 @@ int main(int argc, char *argv[]) {
     case CryptMode::Mode::CBC:
       cryptMode = new CbcMode(&params, &option);
       break;
+    case CryptMode::Mode::PCBC:
+      cryptMode = new PcbcMode(&params, &option);
+      break;
     default:
       cryptMode = new EcbMode(&params, &option);
   }
 
+  //Perform encryption or decryption
   std::vector<unsigned> output;
   if (option.toDecrypt){
     cryptMode->decrypt();
