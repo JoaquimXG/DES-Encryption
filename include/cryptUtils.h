@@ -73,6 +73,19 @@ void hexToBin(std::string inString, std::vector<unsigned>& outVector);
 void XOR(std::vector<unsigned>& firstInput, std::vector<unsigned>& secondInput, std::vector<unsigned>& result, int size);
 
 /*
+ * Performs an XOR on each value in 2 Vectors, storing the result in a third.
+ * The third array can be one of the 2 input Vector, in which case the result will overwrite the intial values.
+ *
+ * This version takes iterators for starting points in each vector and for the starting point in the result.
+ *
+ * @param startLeft An iterator pointing to the first value to XOR in the left hand side vector
+ * @param startRight An iterator pointing to the first value to XOR in the right hand side vector
+ * @param result An iterator pointing to the first index to place a value in a result vector. This could be a position in one of the two input vectors.
+ * @param size The number of values in the Vectors to perform XOR on.
+ */
+void XOR(std::vector<unsigned>::iterator startLeft, std::vector<unsigned>::iterator startRight, std::vector<unsigned>::iterator result, int size);
+
+/*
  * Converts a Vector containing a binary representaion of an integer into the integer.
  * 
  * @param input A Vector containing a binary representation of a decimal integer.

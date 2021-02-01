@@ -107,48 +107,52 @@ class EcbMode: public CryptMode {
 };
 
 /*
- * ECB Mode of encryption
- *
- * Both encryption and decryption, ECB mode simply loops through each 64 bit section of input
- * and performs the selected encryption algorithms encrypt or decrypt function accordingly.
+ * CBC Mode of encryption
  *
  * No preprocessing or post processing is required.
  *
+ * The encryption and decryption algorithms are not symmetrical.
+ * This is because during the encryption process the the plainText is XOR'd initially with 
+ * the IV for the first round, then with the preceeding ciphertext for remaining rounds.
+ *
+ * This process requires that during decryption, the first decrypted block must be XOR'd with 
+ * the IV before decryption occurs to mirror the encryption. 
+ * Remiaining blocks require to be XOR'd with the preceeding cypher text before decryption.
+ * This allows for the decryption in CBC to be parallelized as all the information required to 
+ * each block is available before decryption begins.
+ * Encryption must be performed sequentially as each block requires the previous ciphertext.
+ *
  */
 class CbcMode: public CryptMode {
+    std::vector<unsigned> xorVect;
   public:
     CbcMode(CryptParameters* params, CryptOption* opt);
 
     /*
      * Encrypts the entire input
      *
-     * Runs ecbStructure, pasing in the selected encryption algorithms encrypt function.
+     * Loops through each block of plaintext.
+     * XORs the block with the IV for the first round, with the previous ciphertext
+     * for remaining rounds.
+     * Resulting of XOR is encrypted using the given encryption algorithm.
+     * The cyphertext block is stored to use for XOR in the next round.
+     *
      */
     void encrypt() override;
 
     /*
      * Decrypts the entire input
      *
-     * Runs ecbStructure, pasing in the selected encryption algorithms decrypt function.
+     * Loops through each block of ciphertext.
+     * Runs the block through the provided decryption algorithm.
+     * XORs result of decryption initially with the IV then with the previous ciphertext for remaining rounds.
+     *
+     * This version stores the current ciphertext for use in XOR in the next round.
+     * This is just for convenience, if this algorithm were to be parallelized then each round should retrieve
+     * either the IV or previous ciphertext as required.
+     *
      */
     void decrypt() override;
-
-    /*
-     * Loops through each block of input and runs either an encryption or decrypt function on the block.
-     *
-     * The encryption or decryption function is passed as a parameter through EcbMode::encrypt or EcbMode::decrypt.
-     *
-     * The syntax can be broken down as 
-     * std::vector<unsigned> - The return value of the passed function
-     * CryptAlgorithm::*crypt - A pointer to a member function of the CryptAlgorithm class. 
-     * (std::vector<std::vector<unsigned>>& keyGroup, std::vector<unsigned>::const_iterator plaintextIterator) - The arguments required for the passed function.
-     *
-     * The function that is passed must be a class member function of the CryptAlgorithm class or its descendants and must have the same signature as is defined here.
-     *
-     * @param An encryption or decryption class member function from the CryptAlgorithm class family.
-     *
-     */
-    void cbcStructure(std::vector<unsigned> (CryptAlgorithm::*crypt)(std::vector<std::vector<unsigned>>& keyGroup, std::vector<unsigned>::const_iterator plaintextIterator));
 };
 
 #endif

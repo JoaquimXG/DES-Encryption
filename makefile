@@ -20,7 +20,7 @@ DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 # Converting object file names to include ODIR
 # encryptor and decryptor must be compiled separately
 # as both contain 'main' functions
-_OBJ = OLDdes.o OLDfunctions.o OLDpermutations.o CryptParameters.o CryptOption.o CryptMode.o EcbMode.o DesAlgorithm.o cryptUtils.o
+_OBJ = OLDdes.o OLDfunctions.o OLDpermutations.o CryptParameters.o CryptOption.o CryptMode.o EcbMode.o CbcMode.o DesAlgorithm.o cryptUtils.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 _ENCRYPT_OBJ = OLDencryptor.o
@@ -50,15 +50,20 @@ test:
 	rm -rf test/
 	mkdir -p test 
 	ls -l >> test/input.txt
-	#OLDencryptor test/input.txt -o test/OLDencrypted.hex
+	#Testing ECB crypt
 	./crypt encrypt test/input.txt -o test/encrypted.hex
 	./crypt decrypt test/encrypted.hex -o test/decrypted.txt
-	#OLDdecryptor test/encrypted.hex -o test/OLDdecrypted.txt
+	#Testing CBC Crypt using old encryptor/decryptor
+	./crypt encrypt test/input.txt -o test/encryptedCbc.hex -m cbc
+	#--------------------
+	./crypt decrypt test/encryptedCbc.hex -o test/decryptedCbc.txt -m cbc
+	./OLDdecryptor test/encryptedCbc.hex -o test/OLDdecryptedCbc.txt -m cbc
 	@echo 
 	@echo "Running diff on input and decrypted files -------------------------"
 	@echo 
-	#cat test/OLDdecrypted.txt
 	cat test/decrypted.txt
+	cat test/OLDdecryptedCbc.txt
+	cat test/decryptedCbc.txt
 
 .PHONY: all
 all: 

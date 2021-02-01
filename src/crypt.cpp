@@ -43,20 +43,23 @@ int main(int argc, char *argv[]) {
   //Choose mode of encryption
   CryptMode* cryptMode;
   switch(option.cryptMode){
-      default:
-          cryptMode = new EcbMode(&params, &option);
+    case CryptMode::Mode::CBC:
+      cryptMode = new CbcMode(&params, &option);
+      break;
+    default:
+      cryptMode = new EcbMode(&params, &option);
   }
 
   std::vector<unsigned> output;
   if (option.toDecrypt){
-      cryptMode->decrypt();
-      output = cryptMode->resultToDecimal();
-      outFileStream << decVectorToCharString(output);
+    cryptMode->decrypt();
+    output = cryptMode->resultToDecimal();
+    outFileStream << decVectorToCharString(output);
   }
   else {
-      cryptMode->encrypt();
-      output = cryptMode->resultToDecimal();
-      outFileStream << decVectorToHexString(output);
+    cryptMode->encrypt();
+    output = cryptMode->resultToDecimal();
+    outFileStream << decVectorToHexString(output);
   }
 
   debug.print(cryptMode->toString());

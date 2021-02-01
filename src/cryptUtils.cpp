@@ -124,7 +124,6 @@ void hexToBin(std::string inString, std::vector<unsigned>& outVector){
   }
 }
 
-//TODO, this will need an offset if it is ever to operate on the middle of an array
 void XOR(std::vector<unsigned>& firstInput, std::vector<unsigned>& secondInput, std::vector<unsigned>& result, int size) {
   for (int i = 0; i < size; i++) {
     if (firstInput[i] == secondInput[i]) {
@@ -132,6 +131,19 @@ void XOR(std::vector<unsigned>& firstInput, std::vector<unsigned>& secondInput, 
     } else {
       result[i] = 1;
     }
+  }
+}
+
+void XOR(std::vector<unsigned>::iterator startLeft, std::vector<unsigned>::iterator startRight, std::vector<unsigned>::iterator result, int size) {
+  for (int i = 0; i < size; i++) {
+    if (*startLeft == *startRight) {
+      *result = 0;
+    } else {
+      *result = 1;
+    }
+    startLeft++;
+    startRight++;
+    result++;
   }
 }
 
