@@ -1,5 +1,5 @@
 #include "../include/DesAlgorithm.h"
-#include "../include/OLDpermutations.h"
+#include "../include/permutations.h"
 #include "../include/cryptUtils.h"
 
 std::vector<unsigned> DesAlgorithm::encrypt(std::vector<std::vector<unsigned>>& keyGroup, std::vector<unsigned>::const_iterator plaintextIterator){

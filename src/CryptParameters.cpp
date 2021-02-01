@@ -1,5 +1,5 @@
 #include "../include/CryptParameters.h"
-#include "../include/OLDpermutations.h"
+#include "../include/permutations.h"
 #include "../include/cryptUtils.h"
 #include "../include/constants.h"
 #include <fstream>

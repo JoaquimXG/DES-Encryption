@@ -7,7 +7,7 @@
 #include <fstream>
 #include <math.h>
 #include "../include/cryptUtils.h"
-#include "../include/OLDpermutations.h"
+#include "../include/permutations.h"
 #include "../include/constants.h"
 
 std::string getFileContents(std::string fileName){
