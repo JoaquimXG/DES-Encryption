@@ -4,6 +4,10 @@
 #include <vector>
 #include <iostream>
 
+
+//TODO allow block size to be set through command line arguments
+int BLOCKSIZE = 1;
+
 CfbMode::CfbMode(CryptParameters* params, CryptOption* opt)
     : CryptMode(params, opt), xorVect(64, 0){
         this->cryptAlgo = getAlgorithm(opt->cryptMethod);
@@ -14,16 +18,18 @@ void CfbMode::encrypt(){
   std::vector<unsigned> ciphertextBlock(64, 0);
   xorVect = params->ivVect;
 
-  for (int i = 0; i < this->params->numberOfBlocks; i++){
-    XOR(inputIt, xorVect.begin(), xorVect.begin(), 64);
-
+  //TODO calculate number of blocks before we get to this function
+  for (int i = 0; i < (this->params->numberOfBlocks * 64/BLOCKSIZE); i++){
     ciphertextBlock = this->cryptAlgo->encrypt(params->keyVect, xorVect.begin());
-    resultVect.insert(resultVect.end(), ciphertextBlock.begin(), ciphertextBlock.end());
 
-    std::vector<unsigned> plaintextBlock(inputIt, inputIt+64);
-    XOR(plaintextBlock, ciphertextBlock, xorVect, 64);
+    XOR(inputIt, ciphertextBlock.begin(), ciphertextBlock.begin(), BLOCKSIZE);
 
-    inputIt = inputIt + 64;
+    resultVect.insert(resultVect.end(), ciphertextBlock.begin(), ciphertextBlock.begin() + BLOCKSIZE);
+
+    leftShift(xorVect, BLOCKSIZE % 64);
+    std::copy(ciphertextBlock.begin(), ciphertextBlock.begin()+BLOCKSIZE, xorVect.end()-BLOCKSIZE);
+
+    inputIt = inputIt + BLOCKSIZE;
   }
 }
 
@@ -32,15 +38,15 @@ void CfbMode::decrypt(){
   std::vector<unsigned> plaintextBlock(64, 0);
   xorVect = params->ivVect;
 
-  for (int i = 0; i < this->params->numberOfBlocks; i++){
-    plaintextBlock = this->cryptAlgo->decrypt(params->keyVect, inputIt);
-    XOR(plaintextBlock.begin(), xorVect.begin(), plaintextBlock.begin(), 64);
+  for (int i = 0; i < (this->params->numberOfBlocks * 64/BLOCKSIZE); i++){
+    plaintextBlock = this->cryptAlgo->encrypt(params->keyVect, xorVect.begin());
+    XOR(inputIt, plaintextBlock.begin(), plaintextBlock.begin(), BLOCKSIZE);
 
-    resultVect.insert(resultVect.end(), plaintextBlock.begin(), plaintextBlock.end());
+    resultVect.insert(resultVect.end(), plaintextBlock.begin(), plaintextBlock.begin()+BLOCKSIZE);
 
-    std::vector<unsigned> ciphertextBlock(inputIt, inputIt+64);
-    XOR(ciphertextBlock, plaintextBlock, xorVect, 64);
+    leftShift(xorVect, BLOCKSIZE % 64);
+    std::copy(inputIt, inputIt+BLOCKSIZE, xorVect.end()-BLOCKSIZE);
 
-    inputIt = inputIt + 64;
+    inputIt = inputIt + BLOCKSIZE;
   }
 }
