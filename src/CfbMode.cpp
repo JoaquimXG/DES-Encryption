@@ -6,7 +6,7 @@
 
 
 //TODO allow block size to be set through command line arguments
-int BLOCKSIZE = 1;
+int BLOCKSIZE = 8;
 
 CfbMode::CfbMode(CryptParameters* params, CryptOption* opt)
     : CryptMode(params, opt), xorVect(64, 0){
