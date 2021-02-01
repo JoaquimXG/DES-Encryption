@@ -19,6 +19,7 @@ Usage:
 Options:
     -h --help     Show this screen.
     -d            Run with debugging information
+    -s size       The block size to use for stream cipher modes, OFB and CFB
     -i IV         Initialisation vector for encryption
     -k key        Encryption key
     -o outFile    Output file
